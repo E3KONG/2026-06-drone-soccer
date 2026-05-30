@@ -1,11 +1,21 @@
 <script>
+  import { Grid, Edges } from '@threlte/extras'
   import { T } from '@threlte/core'
-  import { colors } from '../constants/colors'
+  import { colors } from '../constants/colors.ts'
 </script>
 
-<T.Mesh rotation.x={-Math.PI / 2} position.y={-1}>
-  <!-- <T.PlaneGeometry args={[30, 30]} />
-  <T.MeshStandardMaterial color={colors.gray[100]} /> -->
+
+<T.Mesh position={[0, 2.5, 0]}>
+  <T.BoxGeometry args={[7, 5, 16]} />
+  <T.MeshBasicMaterial transparent opacity={0} />
+  <Edges color={colors.gray[800]} />
 </T.Mesh>
 
-<T.GridHelper args={[16, 16, colors.gray[800], colors.gray[800]]} position.y={-0.99} />
+
+<Grid
+  gridSize={[7, 16]}
+  cellSize={1}
+  cellColor={colors.gray[800]}
+  sectionSize={0}
+  position.y={0.01}
+/>

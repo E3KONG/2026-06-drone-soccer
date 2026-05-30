@@ -14,7 +14,7 @@
     const TILT_FACTOR = 0.05;
 
     const BOUNDS_MIN = new Vector3(-3.5, 0, -8);
-    const BOUNDS_MAX = new Vector3(3.5, 10, 8);
+    const BOUNDS_MAX = new Vector3(3.5, 5, 8);
 
     const gltf = useGltf(droneUrl);
 
