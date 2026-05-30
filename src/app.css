@@ -15,6 +15,6 @@ body,
 }
 
 body {
-  background: #000;
+  background: var(--color-gray-900);
 }
 

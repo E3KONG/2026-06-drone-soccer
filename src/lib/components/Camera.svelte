@@ -5,6 +5,7 @@
 
   let camRef = $state()
 
+  const initialPos = new Vector3()
   const targetPos  = new Vector3()
   const offset     = new Vector3()
   const yawEuler   = new Euler()

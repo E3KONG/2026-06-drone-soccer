@@ -1,17 +1,17 @@
 <script>
     import { T, useTask } from "@threlte/core";
     import { useGltf } from "@threlte/extras";
-    import { MathUtils, Quaternion, Euler } from "three";
+    import { MathUtils, Quaternion, Euler, Vector3 } from "three";
     import droneUrl from "../../assets/Drone.glb?url";
     import { input } from "../state/input.svelte.ts";
     import { dronePos } from "../state/droneState.svelte.ts";
 
-    const ACCEL = 0.004;
+    const ACCEL = 0.01;
     const DAMPING = 0.92;
-    const YAW_RATE = 0.03;
+    const YAW_RATE = 0.05;
     const TILT = 0.5;
     const MAX_VEL = 0.3;
-    const tilt_factor = 0.12;
+    const tilt_factor = 0.05;
 
     const gltf = useGltf(droneUrl);
 
@@ -23,22 +23,25 @@
     let currentRoll = 0;
 
     // 在 useTask 外建立，每幀重用，不重複 new
-    const qYaw = new Quaternion();
-    const qTilt = new Quaternion();
-    const eYaw = new Euler();
-    const eTilt = new Euler();
+    const qYaw    = new Quaternion();
+    const qTilt   = new Quaternion();
+    const eYaw    = new Euler();
+    const eTilt   = new Euler();
+    const moveDir = new Vector3();
 
-    useTask((delta) => {
+    useTask(() => {
         if (!droneRef) return;
 
-        vel.x = MathUtils.clamp(vel.x + input.roll * ACCEL, -MAX_VEL, MAX_VEL);
-        vel.y = MathUtils.clamp(
-            vel.y + input.throttle * ACCEL,
-            -MAX_VEL,
-            MAX_VEL,
-        );
-        vel.z = MathUtils.clamp(vel.z + input.pitch * ACCEL, -MAX_VEL, MAX_VEL);
+        // 先更新 yaw，再用它旋轉移動方向
         yaw += input.yaw * YAW_RATE;
+        eYaw.set(0, yaw, 0);
+
+        // pitch/roll 輸入在本地座標，旋轉到世界座標後才加速度
+        moveDir.set(input.roll, 0, input.pitch).applyEuler(eYaw);
+
+        vel.x = MathUtils.clamp(vel.x + moveDir.x * ACCEL, -MAX_VEL, MAX_VEL);
+        vel.y = MathUtils.clamp(vel.y + input.throttle * ACCEL, -MAX_VEL, MAX_VEL);
+        vel.z = MathUtils.clamp(vel.z + moveDir.z * ACCEL, -MAX_VEL, MAX_VEL);
 
         vel.x *= DAMPING;
         vel.y *= DAMPING;
@@ -48,8 +51,7 @@
         droneRef.position.y += vel.y;
         droneRef.position.z += vel.z;
 
-        // yaw quaternion（機頭朝向）
-        eYaw.set(0, yaw, 0);
+        // yaw quaternion（eYaw 已在上面設好）
         qYaw.setFromEuler(eYaw);
 
         // lerp 目前 tilt 靠近目標（input * TILT）
