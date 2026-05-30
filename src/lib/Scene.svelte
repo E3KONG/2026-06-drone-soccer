@@ -1,8 +1,8 @@
 <script>
   import { Canvas, T } from '@threlte/core'
-  import Arena from './Arena.svelte'
-  import Drone from './Drone.svelte'
-  import FollowCamera from './FollowCamera.svelte'
+  import Arena from './components/Arena.svelte'
+  import Drone from './components/Drone.svelte'
+  import Camera from './components/Camera.svelte'
 </script>
 
 <Canvas>
@@ -10,7 +10,7 @@
   <T.DirectionalLight position={[5, 10, 5]} intensity={1} />
   <Arena />
   <Drone />
-  <FollowCamera />
+  <Camera />
 </Canvas>
 
 <style>

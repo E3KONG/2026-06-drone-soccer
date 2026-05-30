@@ -18,7 +18,7 @@ A 3D drone soccer practice simulator embedded as an iframe component in TWReport
 
 | Layer               | Technology                                      |
 | ------------------- | ----------------------------------------------- |
-| Framework           | Svelte 5                                        |
+| Framework           | Svelte 5 + TypeScript                           |
 | 3D Rendering        | Threlte v8 (`@threlte/core`, `@threlte/extras`) |
 | Build Tool          | Vite                                            |
 | Mobile Joystick     | nipplejs                                        |
@@ -35,7 +35,7 @@ These three libraries coexist in every component — understanding what each own
 |---|---|---|
 | **Three.js** (`three`) | 3D math, geometry, materials, scene graph | `Vector3`, `Euler`, `MathUtils`, `TorusGeometry` |
 | **Threlte** (`@threlte/core`, `@threlte/extras`) | Svelte component layer over Three.js | `<Canvas>`, `<T.Mesh>`, `useTask`, `useGltf` |
-| **Svelte 5** | Reactivity, component lifecycle, shared state | `$state`, `$effect`, `.svelte.js` modules |
+| **Svelte 5** | Reactivity, component lifecycle, shared state | `$state`, `$effect`, `.svelte.ts` modules |
 
 **Key rule**: Threlte wraps Three.js scene objects as Svelte components, but does not replace Three.js math. Import math utilities (`Vector3`, `MathUtils`, etc.) directly from `three` — they are the same instance Threlte uses internally.
 
@@ -128,34 +128,44 @@ Update `lastZ` every frame after the check.
 │   ├── assets/
 │   │   └── Drone.glb             # Drone 3D model
 │   ├── lib/
+│   │   ├── constants/
+│   │   │   └── colors.ts         # Kids Design System colour tokens (as const)
 │   │   ├── Scene.svelte          # Threlte Canvas + scene root
 │   │   ├── Drone.svelte          # GLB model + physics loop
 │   │   ├── Goal.svelte           # Goal ring mesh + score detection
 │   │   ├── Arena.svelte          # Floor plane + environment
-│   │   ├── FollowCamera.svelte   # Third-person chase camera
+│   │   ├── Camera.svelte   # Third-person chase camera
 │   │   ├── HUD.svelte            # Score display overlay
 │   │   ├── Joystick.svelte       # nipplejs mobile virtual joystick
-│   │   ├── input.svelte.js       # Shared input state (Svelte 5 runes)
-│   │   └── droneState.svelte.js  # Shared drone position state
+│   │   ├── KeyboardControls.svelte # Headless keyboard input handler
+│   │   ├── input.svelte.ts       # Shared input state (Svelte 5 runes)
+│   │   └── droneState.svelte.ts  # Shared drone position state
 │   ├── App.svelte
 │   └── main.js
 ├── public/
 ├── index.html
 ├── vite.config.js
+├── tsconfig.json
 ├── package.json
 └── README.md
 ```
 
 ### File Architecture Ideology
 
-**`.svelte.js` modules** — any state shared between sibling components lives in a `.svelte.js` file using Svelte 5 `$state`. This makes it a module-level singleton accessible to any component that imports it.
+**`.svelte.ts` modules** — any state shared between sibling components lives in a `.svelte.ts` file using Svelte 5 `$state`. This makes it a module-level singleton accessible to any component that imports it.
 
 ```
-input.svelte.js      → written by keyboard + joystick, read by Drone physics
-droneState.svelte.js → written by Drone, read by FollowCamera + Goal
+input.svelte.ts      → written by keyboard + joystick, read by Drone physics
+droneState.svelte.ts → written by Drone, read by FollowCamera + Goal
 ```
 
-**Svelte components (`.svelte`)** — own their local logic and reference shared state from `.svelte.js` modules. Threlte hooks (`useTask`, `useGltf`) and `<T.*>` components live here.
+**`.ts` modules** — pure TypeScript with no runes. Used for constants, utilities, and type definitions.
+
+```
+constants/colors.ts  → Kids Design System colour tokens, used by Three.js materials and HTML overlays
+```
+
+**Svelte components (`.svelte`)** — own their local logic and reference shared state from `.svelte.ts` modules. Threlte hooks (`useTask`, `useGltf`) and `<T.*>` components live here.
 
 ---
 

@@ -2,9 +2,9 @@
     import { T, useTask } from "@threlte/core";
     import { useGltf } from "@threlte/extras";
     import { MathUtils, Quaternion, Euler } from "three";
-    import droneUrl from "../assets/Drone.glb?url";
-    import { input } from "./input.svelte.ts";
-    import { dronePos } from "./droneState.svelte.ts";
+    import droneUrl from "../../assets/Drone.glb?url";
+    import { input } from "../state/input.svelte.ts";
+    import { dronePos } from "../state/droneState.svelte.ts";
 
     const ACCEL = 0.004;
     const DAMPING = 0.92;

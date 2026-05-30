@@ -1,5 +1,5 @@
 <script>
-  import { input } from './input.svelte.ts'
+  import { input } from '../state/input.svelte.ts'
 
   const pressed = new Set()
 
