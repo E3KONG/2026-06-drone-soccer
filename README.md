@@ -27,6 +27,20 @@ A 3D drone soccer practice simulator embedded as an iframe component in TWReport
 
 ---
 
+## Library Responsibilities
+
+These three libraries coexist in every component — understanding what each owns prevents confusion:
+
+| Library | Owns | Examples |
+|---|---|---|
+| **Three.js** (`three`) | 3D math, geometry, materials, scene graph | `Vector3`, `Euler`, `MathUtils`, `TorusGeometry` |
+| **Threlte** (`@threlte/core`, `@threlte/extras`) | Svelte component layer over Three.js | `<Canvas>`, `<T.Mesh>`, `useTask`, `useGltf` |
+| **Svelte 5** | Reactivity, component lifecycle, shared state | `$state`, `$effect`, `.svelte.js` modules |
+
+**Key rule**: Threlte wraps Three.js scene objects as Svelte components, but does not replace Three.js math. Import math utilities (`Vector3`, `MathUtils`, etc.) directly from `three` — they are the same instance Threlte uses internally.
+
+---
+
 ## Features
 
 - 3D drone flight in an open arena with a single goal ring
@@ -72,7 +86,7 @@ No physics engine is used. Physics are approximated with:
 This gives a "floaty but directional" feel appropriate for the audience without the complexity of full 6DOF simulation.
 
 ```
-// Core physics loop (inside useFrame)
+// Core physics loop (inside useTask)
 velocity.x += input.roll  * ACCELERATION
 velocity.y += input.throttle * ACCELERATION
 velocity.z += input.pitch * ACCELERATION
@@ -109,17 +123,20 @@ Update `lastZ` every frame after the check.
 ## Project Structure
 
 ```
-drone-soccer-sim/
+2026-06-drone-soccer/
 ├── src/
+│   ├── assets/
+│   │   └── Drone.glb             # Drone 3D model
 │   ├── lib/
 │   │   ├── Scene.svelte          # Threlte Canvas + scene root
-│   │   ├── Drone.svelte          # Drone mesh + rotor animation
+│   │   ├── Drone.svelte          # GLB model + physics loop
 │   │   ├── Goal.svelte           # Goal ring mesh + score detection
-│   │   ├── Arena.svelte          # Floor grid + environment
+│   │   ├── Arena.svelte          # Floor plane + environment
 │   │   ├── FollowCamera.svelte   # Third-person chase camera
 │   │   ├── HUD.svelte            # Score display overlay
 │   │   ├── Joystick.svelte       # nipplejs mobile virtual joystick
-│   │   └── input.svelte.js       # Shared input state (Svelte 5 runes)
+│   │   ├── input.svelte.js       # Shared input state (Svelte 5 runes)
+│   │   └── droneState.svelte.js  # Shared drone position state
 │   ├── App.svelte
 │   └── main.js
 ├── public/
@@ -128,6 +145,17 @@ drone-soccer-sim/
 ├── package.json
 └── README.md
 ```
+
+### File Architecture Ideology
+
+**`.svelte.js` modules** — any state shared between sibling components lives in a `.svelte.js` file using Svelte 5 `$state`. This makes it a module-level singleton accessible to any component that imports it.
+
+```
+input.svelte.js      → written by keyboard + joystick, read by Drone physics
+droneState.svelte.js → written by Drone, read by FollowCamera + Goal
+```
+
+**Svelte components (`.svelte`)** — own their local logic and reference shared state from `.svelte.js` modules. Threlte hooks (`useTask`, `useGltf`) and `<T.*>` components live here.
 
 ---
 
@@ -145,17 +173,18 @@ export const input = $state({
 })
 ```
 
-Both keyboard and joystick handlers write to this same object. The physics loop in `useFrame` reads from it directly.
+Both keyboard and joystick handlers write to this same object. The physics loop in `useTask` reads from it directly.
 
 ---
 
 ## Camera Behavior
 
-Third-person follow camera using Threlte's `useFrame`:
+Third-person follow camera using Threlte's `useTask`:
 
-- Positioned behind and above the drone (`offset: [0, 2, -6]`)
-- Uses `lerp` for smooth lag (`factor: 0.08`) — gives a natural "chasing" feel
-- Looks at drone position each frame
+- Positioned behind and above the drone (`offset: [0, 2, 6]` rotated by drone yaw)
+- Uses manual `lerp` per axis (`factor: 0.08`) — gives a natural "chasing" feel
+- Looks at drone position each frame via `camera.lookAt(x, y, z)`
+- Drone position shared via `droneState.svelte.js` singleton
 
 ---
 
@@ -198,5 +227,5 @@ Embed in Keystone article editor:
 
 - **Single-player only** — no multiplayer
 - **No wind or gravity** — simplified physics by design
-- **No GLTF model** — drone uses procedural geometry (box + cylinders); replace with `.glb` if visual quality needs upgrading
+- **GLB model** — drone uses `Drone.glb` loaded via `useGltf`; swap the file in `src/assets/` to update the model
 - **iframe scroll conflict on mobile** — joystick area must use `touch-action: none` to prevent page scroll interference
