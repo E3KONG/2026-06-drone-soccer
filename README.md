@@ -126,20 +126,23 @@ Update `lastZ` every frame after the check.
 2026-06-drone-soccer/
 ├── src/
 │   ├── assets/
-│   │   └── Drone.glb             # Drone 3D model
+│   │   └── Drone.glb                  # Drone 3D model
 │   ├── lib/
+│   │   ├── components/                # 3D scene components
+│   │   │   ├── Arena.svelte           # Floor grid
+│   │   │   ├── Bounds.svelte          # Arena boundary cage (Edges + Grid)
+│   │   │   ├── Camera.svelte          # Third-person chase camera
+│   │   │   ├── Drone.svelte           # GLB model + physics loop
+│   │   │   ├── Goal.svelte            # Goal ring + score detection (future)
+│   │   │   ├── HUD.svelte             # Score overlay (future)
+│   │   │   ├── Joystick.svelte        # nipplejs mobile joystick (future)
+│   │   │   └── KeyboardControls.svelte # Headless keyboard handler
 │   │   ├── constants/
-│   │   │   └── colors.ts         # Kids Design System colour tokens (as const)
-│   │   ├── Scene.svelte          # Threlte Canvas + scene root
-│   │   ├── Drone.svelte          # GLB model + physics loop
-│   │   ├── Goal.svelte           # Goal ring mesh + score detection
-│   │   ├── Arena.svelte          # Floor plane + environment
-│   │   ├── Camera.svelte   # Third-person chase camera
-│   │   ├── HUD.svelte            # Score display overlay
-│   │   ├── Joystick.svelte       # nipplejs mobile virtual joystick
-│   │   ├── KeyboardControls.svelte # Headless keyboard input handler
-│   │   ├── input.svelte.ts       # Shared input state (Svelte 5 runes)
-│   │   └── droneState.svelte.ts  # Shared drone position state
+│   │   │   └── colors.ts              # Kids Design System colour tokens (as const)
+│   │   ├── state/                     # Shared reactive state (.svelte.ts)
+│   │   │   ├── droneState.svelte.ts   # Drone position — written by Drone, read by Camera + Goal
+│   │   │   └── input.svelte.ts        # Input axes — written by keyboard + joystick, read by Drone
+│   │   └── Scene.svelte               # Threlte Canvas entry point
 │   ├── App.svelte
 │   └── main.js
 ├── public/
@@ -156,7 +159,7 @@ Update `lastZ` every frame after the check.
 
 ```
 input.svelte.ts      → written by keyboard + joystick, read by Drone physics
-droneState.svelte.ts → written by Drone, read by FollowCamera + Goal
+droneState.svelte.ts → written by Drone, read by Camera + Goal
 ```
 
 **`.ts` modules** — pure TypeScript with no runes. Used for constants, utilities, and type definitions.
@@ -173,8 +176,8 @@ constants/colors.ts  → Kids Design System colour tokens, used by Three.js mate
 
 Input is stored as a plain reactive object using Svelte 5 runes — **not** a Svelte store — to avoid triggering reactivity on every frame:
 
-```js
-// src/lib/input.svelte.js
+```ts
+// src/lib/state/input.svelte.ts
 export const input = $state({
   throttle: 0,  // -1 to 1
   yaw: 0,       // -1 to 1

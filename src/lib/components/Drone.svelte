@@ -2,7 +2,7 @@
     import { T, useTask } from "@threlte/core";
     import { useGltf } from "@threlte/extras";
     import { MathUtils, Quaternion, Euler, Vector3 } from "three";
-    import droneUrl from "../../assets/Drone.glb?url";
+    import droneUrl from "../../assets/drone-soccer.glb?url";
     import { input } from "../state/input.svelte.ts";
     import { dronePos } from "../state/droneState.svelte.ts";
 

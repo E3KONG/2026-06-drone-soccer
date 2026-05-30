@@ -13,11 +13,11 @@
     if (!camRef) return
 
     yawEuler.set(0, dronePos.yaw, 0)
-    offset.set(0, 2, 6)
+    offset.set(0, 0.5, 1.25)
     offset.applyEuler(yawEuler)
 
     targetPos.set(dronePos.x, dronePos.y, dronePos.z).add(offset)
-    camRef.position.lerp(targetPos, 0.02)
+    camRef.position.lerp(targetPos, 0.2)
     camRef.lookAt(dronePos.x, dronePos.y, dronePos.z)
   })
 </script>
@@ -29,6 +29,6 @@
   far={1000}
   bind:ref={camRef}
   position.x={0}
-  position.y={5}
-  position.z={0}
+  position.y={0.2}
+  position.z={1}
 />
