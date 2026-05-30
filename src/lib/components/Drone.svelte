@@ -11,7 +11,10 @@
     const YAW_RATE = 0.05;
     const TILT = 0.5;
     const MAX_VEL = 0.3;
-    const tilt_factor = 0.05;
+    const TILT_FACTOR = 0.05;
+
+    const BOUNDS_MIN = new Vector3(-3.5, 0, -8);
+    const BOUNDS_MAX = new Vector3(3.5, 10, 8);
 
     const gltf = useGltf(droneUrl);
 
@@ -23,10 +26,10 @@
     let currentRoll = 0;
 
     // 在 useTask 外建立，每幀重用，不重複 new
-    const qYaw    = new Quaternion();
-    const qTilt   = new Quaternion();
-    const eYaw    = new Euler();
-    const eTilt   = new Euler();
+    const qYaw = new Quaternion();
+    const qTilt = new Quaternion();
+    const eYaw = new Euler();
+    const eTilt = new Euler();
     const moveDir = new Vector3();
 
     useTask(() => {
@@ -40,7 +43,11 @@
         moveDir.set(input.roll, 0, input.pitch).applyEuler(eYaw);
 
         vel.x = MathUtils.clamp(vel.x + moveDir.x * ACCEL, -MAX_VEL, MAX_VEL);
-        vel.y = MathUtils.clamp(vel.y + input.throttle * ACCEL, -MAX_VEL, MAX_VEL);
+        vel.y = MathUtils.clamp(
+            vel.y + input.throttle * ACCEL,
+            -MAX_VEL,
+            MAX_VEL,
+        );
         vel.z = MathUtils.clamp(vel.z + moveDir.z * ACCEL, -MAX_VEL, MAX_VEL);
 
         vel.x *= DAMPING;
@@ -51,12 +58,22 @@
         droneRef.position.y += vel.y;
         droneRef.position.z += vel.z;
 
+        // 碰到邊界先歸零對應軸的速度，再 clamp 位置
+        if (droneRef.position.x < BOUNDS_MIN.x || droneRef.position.x > BOUNDS_MAX.x)
+            vel.x = 0;
+        if (droneRef.position.y < BOUNDS_MIN.y || droneRef.position.y > BOUNDS_MAX.y)
+            vel.y = 0;
+        if (droneRef.position.z < BOUNDS_MIN.z ||droneRef.position.z > BOUNDS_MAX.z)
+            vel.z = 0;
+
+        droneRef.position.clamp(BOUNDS_MIN, BOUNDS_MAX);
+
         // yaw quaternion（eYaw 已在上面設好）
         qYaw.setFromEuler(eYaw);
 
         // lerp 目前 tilt 靠近目標（input * TILT）
-        currentPitch += (input.pitch * TILT - currentPitch) * tilt_factor;
-        currentRoll += (-input.roll * TILT - currentRoll) * tilt_factor;
+        currentPitch += (input.pitch * TILT - currentPitch) * TILT_FACTOR;
+        currentRoll += (-input.roll * TILT - currentRoll) * TILT_FACTOR;
 
         eTilt.set(currentPitch, 0, currentRoll);
         qTilt.setFromEuler(eTilt);

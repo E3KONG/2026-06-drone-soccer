@@ -5,7 +5,6 @@
 
   let camRef = $state()
 
-  const initialPos = new Vector3()
   const targetPos  = new Vector3()
   const offset     = new Vector3()
   const yawEuler   = new Euler()
@@ -23,4 +22,13 @@
   })
 </script>
 
-<T.PerspectiveCamera makeDefault fov={75} near={0.1} far={1000} bind:ref={camRef} />
+<T.PerspectiveCamera
+  makeDefault
+  fov={75}
+  near={0.1}
+  far={1000}
+  bind:ref={camRef}
+  position.x={0}
+  position.y={5}
+  position.z={0}
+/>

@@ -8,4 +8,4 @@
   <T.MeshStandardMaterial color={colors.gray[100]} /> -->
 </T.Mesh>
 
-<T.GridHelper args={[30, 30, colors.gray[800], colors.gray[800]]} position.y={-0.99} />
+<T.GridHelper args={[16, 16, colors.gray[800], colors.gray[800]]} position.y={-0.99} />
