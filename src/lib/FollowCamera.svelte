@@ -1,7 +1,7 @@
 <script>
   import { T, useTask } from '@threlte/core'
   import { Vector3, Euler } from 'three'
-  import { dronePos } from './droneState.svelte.js'
+  import { dronePos } from './droneState.svelte.ts'
 
   let camRef = $state()
 
