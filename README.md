@@ -4,6 +4,14 @@ A 3D drone soccer practice simulator embedded as an iframe component in TWReport
 
 ---
 
+## Project Setup
+```
+pnpm install
+pnpm run dev -- --host
+```
+
+---
+
 ## Project Context
 
 - **Platform**: TWReporter Kids (`kids.twreporter.org`)
@@ -126,16 +134,15 @@ Update `lastZ` every frame after the check.
 2026-06-drone-soccer/
 ├── src/
 │   ├── assets/
-│   │   └── Drone.glb                  # Drone 3D model
+│   │   └── drone-soccer.glb           # Drone 3D model
 │   ├── lib/
 │   │   ├── components/                # 3D scene components
-│   │   │   ├── Arena.svelte           # Floor grid
-│   │   │   ├── Bounds.svelte          # Arena boundary cage (Edges + Grid)
+│   │   │   ├── Arena.svelte           # Floor grid + boundary cage (Grid + Edges)
 │   │   │   ├── Camera.svelte          # Third-person chase camera
 │   │   │   ├── Drone.svelte           # GLB model + physics loop
 │   │   │   ├── Goal.svelte            # Goal ring + score detection (future)
 │   │   │   ├── HUD.svelte             # Score overlay (future)
-│   │   │   ├── Joystick.svelte        # nipplejs mobile joystick (future)
+│   │   │   ├── Joystick.svelte        # nipplejs mobile joystick (touch-only)
 │   │   │   └── KeyboardControls.svelte # Headless keyboard handler
 │   │   ├── constants/
 │   │   │   └── colors.ts              # Kids Design System colour tokens (as const)
@@ -198,6 +205,26 @@ Third-person follow camera using Threlte's `useTask`:
 - Uses manual `lerp` per axis (`factor: 0.08`) — gives a natural "chasing" feel
 - Looks at drone position each frame via `camera.lookAt(x, y, z)`
 - Drone position shared via `droneState.svelte.js` singleton
+
+---
+
+## Joystick Behavior
+
+Two `static`-mode nipplejs sticks (left + right), rendered as an HTML overlay above the canvas — **not** inside `<Canvas>`. Mounted in `App.svelte` alongside `KeyboardControls`.
+
+- **Touch-only**: the whole overlay is gated behind `matchMedia('(pointer: coarse)')`, so desktop stays keyboard-only.
+- **Axis mapping** (writes the same `input` object the keyboard does):
+
+  | Stick | nipplejs | `input` |
+  |---|---|---|
+  | Left X | `vector.x` | `yaw` |
+  | Left Y | `vector.y` | `throttle` |
+  | Right X | `vector.x` | `roll` |
+  | Right Y | `-vector.y` | `pitch` (sign flipped — stick up = fly forward = `-z`) |
+
+- **nipplejs 1.0.x payload**: the `move` handler receives a single `evt`; data is on `evt.data` (`evt.data.vector`, range −1..1). The pre-1.0 `(evt, data)` two-arg signature is gone.
+- **Reset**: the `end` event zeroes that stick's axes (the `move` event does not fire at rest).
+- **Styling**: nipplejs injects `.joystick` > `.back` + `.front` divs at runtime, so CSS targets them via `:global()`. It sets `background`/`opacity`/`size`/`border-radius` as inline styles → override those with `!important`; `box-shadow`/`border` are free. There is no built-in "active" class, so `start`/`end` toggle a local `active` flag for pressed-state styling. Idle fade is the `restOpacity` option.
 
 ---
 
