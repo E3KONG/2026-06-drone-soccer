@@ -9,7 +9,7 @@
   function poll() {
     const pad = navigator.getGamepads().find(Boolean)   // first connected pad
     if (pad) {
-      input.yaw      = dz(pad.axes[0])
+      input.yaw      = dz(-pad.axes[0])
       input.throttle = dz(-pad.axes[1])
       input.roll     = dz(pad.axes[2])
       input.pitch    = dz(pad.axes[3])

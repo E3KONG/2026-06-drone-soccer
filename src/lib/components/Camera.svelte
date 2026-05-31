@@ -24,7 +24,7 @@
 
 <T.PerspectiveCamera
   makeDefault
-  fov={75}
+  fov={50}
   near={0.1}
   far={1000}
   bind:ref={camRef}

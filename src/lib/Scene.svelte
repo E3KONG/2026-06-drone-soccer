@@ -3,6 +3,7 @@
   import Arena from './components/Arena.svelte'
   import Drone from './components/Drone.svelte'
   import Camera from './components/Camera.svelte'
+  import Goal from './components/Goal.svelte'
 </script>
 
 <Canvas>
@@ -10,6 +11,7 @@
   <T.DirectionalLight position={[5, 10, 5]} intensity={1} />
   <Arena />
   <Drone />
+  <Goal />
   <Camera />
 </Canvas>
 

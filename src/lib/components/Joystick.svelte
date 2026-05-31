@@ -32,7 +32,7 @@
     });
 
     left.on("move", (evt) => {
-      input.yaw = evt.data.vector.x;
+      input.yaw = -evt.data.vector.x;
       input.throttle = evt.data.vector.y;
     });
     left.on("start", () => (leftActive = true));

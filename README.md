@@ -30,6 +30,7 @@ pnpm run dev -- --host
 | 3D Rendering        | Threlte v8 (`@threlte/core`, `@threlte/extras`) |
 | Build Tool          | Vite                                            |
 | Mobile Joystick     | nipplejs                                        |
+| Gamepad             | Web Gamepad API (Xbox / DualSense, standard mapping) |
 | Physics             | Custom (no Rapier) — velocity vectors + inertia |
 | Collision Detection | Math-based (no physics engine)                  |
 
@@ -55,7 +56,7 @@ These three libraries coexist in every component — understanding what each own
 - Dual-joystick control scheme (mirrors real RC controller logic)
 - Third-person follow camera
 - Simple scoring — detects when drone passes through the goal ring
-- Responsive: keyboard on desktop, virtual joystick on mobile
+- Responsive controls: keyboard on desktop, virtual joystick on mobile, optional Xbox / DualSense gamepad
 - Self-contained static build, embeddable as `<iframe>`
 
 ---
@@ -79,6 +80,17 @@ These three libraries coexist in every component — understanding what each own
 | Left | X | Yaw left / right |
 | Right | Y | Pitch forward / backward |
 | Right | X | Roll left / right |
+
+### Gamepad (Xbox / DualSense)
+
+Standard-mapping controllers only (both report `mapping: "standard"`).
+
+| Axis | `input` | Action |
+|---|---|---|
+| Left stick X (`axes[0]`) | `yaw` | Yaw left / right |
+| Left stick Y (`axes[1]`) | `throttle` | Throttle up / down (sign flipped) |
+| Right stick X (`axes[2]`) | `roll` | Roll left / right |
+| Right stick Y (`axes[3]`) | `pitch` | Pitch forward / backward |
 
 ---
 
@@ -140,6 +152,7 @@ Update `lastZ` every frame after the check.
 │   │   │   ├── Arena.svelte           # Floor grid + boundary cage (Grid + Edges)
 │   │   │   ├── Camera.svelte          # Third-person chase camera
 │   │   │   ├── Drone.svelte           # GLB model + physics loop
+│   │   │   ├── GamepadControls.svelte # Headless Gamepad API poll loop (Xbox / DualSense)
 │   │   │   ├── Goal.svelte            # Goal ring + score detection (future)
 │   │   │   ├── HUD.svelte             # Score overlay (future)
 │   │   │   ├── Joystick.svelte        # nipplejs mobile joystick (touch-only)
@@ -225,6 +238,26 @@ Two `static`-mode nipplejs sticks (left + right), rendered as an HTML overlay ab
 - **nipplejs 1.0.x payload**: the `move` handler receives a single `evt`; data is on `evt.data` (`evt.data.vector`, range −1..1). The pre-1.0 `(evt, data)` two-arg signature is gone.
 - **Reset**: the `end` event zeroes that stick's axes (the `move` event does not fire at rest).
 - **Styling**: nipplejs injects `.joystick` > `.back` + `.front` divs at runtime, so CSS targets them via `:global()`. It sets `background`/`opacity`/`size`/`border-radius` as inline styles → override those with `!important`; `box-shadow`/`border` are free. There is no built-in "active" class, so `start`/`end` toggle a local `active` flag for pressed-state styling. Idle fade is the `restOpacity` option.
+
+---
+
+## Gamepad Behavior
+
+`GamepadControls.svelte` is a headless component (same pattern as `KeyboardControls`) that writes the same `input` object. Mounted in `App.svelte`.
+
+- **Polling, not events**: the Gamepad API has no movement event, so a `requestAnimationFrame` loop calls `navigator.getGamepads()` fresh each frame (the Gamepad object is a snapshot, not live). The loop only runs while a pad is connected — `gamepadconnected` starts it, `gamepaddisconnected` stops it and zeroes the axes.
+- **Standard mapping** (Xbox + DualSense both report `mapping: "standard"`):
+
+  | Axis | `input` | Note |
+  |---|---|---|
+  | `axes[0]` left X | `yaw` | right = +1 |
+  | `axes[1]` left Y | `-throttle` | axis up = −1, throttle up = +1 → sign flipped |
+  | `axes[2]` right X | `roll` | right = +1 |
+  | `axes[3]` right Y | `pitch` | axis up = −1 = forward → matches `ArrowUp`, no flip |
+
+- **Deadzone**: `DEADZONE = 0.12` applied per-axis — sticks (especially DualSense) drift, so without it the drone creeps.
+- **Chrome activation quirk**: `gamepadconnected` only fires after the user presses a button (gesture requirement), so a freshly plugged pad seems unresponsive until first input. Expected.
+- **Input authority**: while connected, the poll overwrites all four axes every frame, so the gamepad takes over from the keyboard (an idle stick holds the axes at 0). Acceptable for a single-player embed.
 
 ---
 
