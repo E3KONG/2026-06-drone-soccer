@@ -5,6 +5,7 @@
     import droneUrl from "../../assets/drone-soccer.glb?url";
     import { input } from "../state/input.svelte.ts";
     import { dronePos } from "../state/droneState.svelte.ts";
+    import { GOAL, GOAL_RING_R, GOAL_TUBE_R } from "./Goal.svelte";
 
     const ACCEL = 0.01;
     const DAMPING = 0.92;
@@ -12,6 +13,9 @@
     const TILT = 0.5;
     const MAX_VEL = 0.3;
     const TILT_FACTOR = 0.05;
+
+    const DRONE_RADIUS = 0.2;
+    const RESTITUTION = 0.5;
 
     const BOUNDS_MIN = new Vector3(-3.5, 0, -8);
     const BOUNDS_MAX = new Vector3(3.5, 5, 8);
@@ -31,6 +35,8 @@
     const eYaw = new Euler();
     const eTilt = new Euler();
     const moveDir = new Vector3();
+    const toDrone = new Vector3();
+    const normal = new Vector3();
 
     useTask(() => {
         if (!droneRef) return;
@@ -67,6 +73,29 @@
             vel.z = 0;
 
         droneRef.position.clamp(BOUNDS_MIN, BOUNDS_MAX);
+
+        toDrone.copy(droneRef.position).sub(GOAL);
+        const planar = Math.hypot(toDrone.x, toDrone.y);
+        const dr = planar - GOAL_RING_R;
+        const d = Math.hypot(dr, toDrone.z);
+        const surfaceDist = GOAL_TUBE_R + DRONE_RADIUS;
+
+        if (d < surfaceDist && planar > 1e-4) {
+            normal.set(
+                (toDrone.x / planar) * (dr / d),
+                (toDrone.y / planar) * (dr / d),
+                toDrone.z / d,
+            );
+            droneRef.position.addScaledVector(normal, surfaceDist - d);
+
+            const vn = vel.x * normal.x + vel.y * normal.y + vel.z * normal.z;
+            if (vn < 0) {
+                const j = (1 + RESTITUTION) * vn;
+                vel.x -= j * normal.x;
+                vel.y -= j * normal.y;
+                vel.z -= j * normal.z;
+            }
+        }
 
         // yaw quaternion（eYaw 已在上面設好）
         qYaw.setFromEuler(eYaw);

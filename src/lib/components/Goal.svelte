@@ -1,12 +1,16 @@
+<script module>
+  import { Vector3 } from 'three'
+
+  export const GOAL = new Vector3(0, 2.5, -6)
+  export const GOAL_RING_R = 0.4
+  export const GOAL_TUBE_R = 0.1
+</script>
+
 <script>
   import { T, useTask } from '@threlte/core'
-  import { Vector3 } from 'three'
   import { dronePos } from '../state/droneState.svelte.ts'
   import { score } from '../state/score.svelte.ts'
   import { colors } from '../constants/colors.ts'
-
-  const GOAL = new Vector3(0, 2.5, -6)
-  const GOAL_RADIUS = 0.4
 
   let lastZ = dronePos.z
 
@@ -17,13 +21,13 @@
     if (crossed) {
       const dx = dronePos.x - GOAL.x
       const dy = dronePos.y - GOAL.y
-      if (Math.sqrt(dx * dx + dy * dy) < GOAL_RADIUS) score.value++
+      if (Math.sqrt(dx * dx + dy * dy) < GOAL_RING_R) score.value++
     }
     lastZ = z
   })
 </script>
 
 <T.Mesh position={GOAL.toArray()}>
-  <T.TorusGeometry args={[GOAL_RADIUS, 0.1, 16, 48]} />
+  <T.TorusGeometry args={[GOAL_RING_R, GOAL_TUBE_R, 16, 48]} />
   <T.MeshStandardMaterial color={colors.yellow[400]} />
 </T.Mesh>
