@@ -1,21 +1,25 @@
 <script>
-  import { Grid, Edges } from '@threlte/extras'
-  import { T } from '@threlte/core'
-  import { colors } from '../constants/colors.ts'
+  import { T, useThrelte } from '@threlte/core'
+  import { useGltf } from '@threlte/extras'
+  import arenaUrl from '../../assets/area.glb?url'
+
+  const gltf = useGltf(arenaUrl)
+  const { renderer } = useThrelte()
+
+  $effect(() => {
+    const g = $gltf
+    if (!g) return
+    const max = renderer.capabilities.getMaxAnisotropy()
+    g.scene.traverse((o) => {
+      const m = o.material
+      if (!m) return
+      for (const t of [m.map, m.emissiveMap, m.normalMap, m.roughnessMap]) {
+        if (t) { t.anisotropy = max; t.needsUpdate = true }
+      }
+    })
+  })
 </script>
 
-
-<T.Mesh position={[0, 2.5, 0]}>
-  <T.BoxGeometry args={[7, 5, 16]} />
-  <T.MeshBasicMaterial transparent opacity={0} />
-  <Edges color={colors.gray[800]} />
-</T.Mesh>
-
-
-<Grid
-  gridSize={[7, 16]}
-  cellSize={1}
-  cellColor={colors.gray[800]}
-  sectionSize={0}
-  position.y={0.01}
-/>
+{#if $gltf}
+  <T is={$gltf.scene} rotation.y={Math.PI / 2} />
+{/if}

@@ -5,7 +5,7 @@
     import droneUrl from "../../assets/drone-soccer.glb?url";
     import { input } from "../state/input.svelte.ts";
     import { dronePos } from "../state/droneState.svelte.ts";
-    import { GOAL, GOAL_RING_R, GOAL_TUBE_R } from "./Goal.svelte";
+    import { GOALS, GOAL_RING_R, GOAL_TUBE_R } from "./Goal.svelte";
 
     const ACCEL = 0.01;
     const DAMPING = 0.92;
@@ -17,6 +17,8 @@
     const DRONE_RADIUS = 0.2;
     const RESTITUTION = 0.5;
 
+    const PROP_SPIN = 0.6;
+
     const BOUNDS_MIN = new Vector3(-3.5, 0, -8);
     const BOUNDS_MAX = new Vector3(3.5, 5, 8);
 
@@ -25,6 +27,22 @@
     let droneRef = $state();
     const vel = { x: 0, y: 0, z: 0 };
     let yaw = 0;
+
+    // 螺旋槳：載入後找出 4 片，對角配對反向旋轉
+    let fins = [];
+    $effect(() => {
+        const g = $gltf;
+        if (!g) return;
+        fins = [];
+        g.scene.traverse((o) => {
+            const m = o.name.match(/^Fin_export_(\d+)/);
+            if (m) {
+                const i = Number(m[1]);
+                o.userData.spinDir = i === 0 || i === 3 ? 1 : -1;
+                fins.push(o);
+            }
+        });
+    });
 
     let currentPitch = 0;
     let currentRoll = 0;
@@ -74,26 +92,28 @@
 
         droneRef.position.clamp(BOUNDS_MIN, BOUNDS_MAX);
 
-        toDrone.copy(droneRef.position).sub(GOAL);
-        const planar = Math.hypot(toDrone.x, toDrone.y);
-        const dr = planar - GOAL_RING_R;
-        const d = Math.hypot(dr, toDrone.z);
         const surfaceDist = GOAL_TUBE_R + DRONE_RADIUS;
+        for (const G of GOALS) {
+            toDrone.copy(droneRef.position).sub(G);
+            const planar = Math.hypot(toDrone.x, toDrone.y);
+            const dr = planar - GOAL_RING_R;
+            const d = Math.hypot(dr, toDrone.z);
 
-        if (d < surfaceDist && planar > 1e-4) {
-            normal.set(
-                (toDrone.x / planar) * (dr / d),
-                (toDrone.y / planar) * (dr / d),
-                toDrone.z / d,
-            );
-            droneRef.position.addScaledVector(normal, surfaceDist - d);
+            if (d < surfaceDist && planar > 1e-4) {
+                normal.set(
+                    (toDrone.x / planar) * (dr / d),
+                    (toDrone.y / planar) * (dr / d),
+                    toDrone.z / d,
+                );
+                droneRef.position.addScaledVector(normal, surfaceDist - d);
 
-            const vn = vel.x * normal.x + vel.y * normal.y + vel.z * normal.z;
-            if (vn < 0) {
-                const j = (1 + RESTITUTION) * vn;
-                vel.x -= j * normal.x;
-                vel.y -= j * normal.y;
-                vel.z -= j * normal.z;
+                const vn = vel.x * normal.x + vel.y * normal.y + vel.z * normal.z;
+                if (vn < 0) {
+                    const j = (1 + RESTITUTION) * vn;
+                    vel.x -= j * normal.x;
+                    vel.y -= j * normal.y;
+                    vel.z -= j * normal.z;
+                }
             }
         }
 
@@ -108,6 +128,11 @@
         qTilt.setFromEuler(eTilt);
 
         droneRef.quaternion.copy(qYaw).multiply(qTilt);
+
+        // 螺旋槳持續旋轉，移動越快轉越快
+        const speed = Math.hypot(vel.x, vel.y, vel.z);
+        const spin = PROP_SPIN + speed * 3;
+        for (const f of fins) f.rotateY(spin * f.userData.spinDir);
 
         dronePos.x = droneRef.position.x;
         dronePos.y = droneRef.position.y;
