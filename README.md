@@ -8,6 +8,20 @@ A 3D drone soccer practice simulator embedded as an iframe component in TWReport
 ```
 pnpm install
 pnpm run dev -- --host
+pnpm build
+```
+
+---
+
+## Embeded Code
+```
+<iframe
+  src="https://e3kong.github.io/2026-06-drone-soccer/"
+  title="Drone Soccer"
+  style="width:100%; aspect-ratio:16/9; max-width:960px; border:0; border-radius:12px;"
+  allow="gamepad; fullscreen; accelerometer; gyroscope"
+  loading="lazy"
+></iframe>
 ```
 
 ---
