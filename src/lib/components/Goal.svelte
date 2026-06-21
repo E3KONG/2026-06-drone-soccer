@@ -88,9 +88,11 @@
     const z = dronePos.z
     for (let i = 0; i < GOALS.length; i++) {
       const g = GOALS[i]
-      // 穿越球門所在的 z 平面(任一方向)且在環內 → 得分
+      // 穿越球門所在的 z 平面
       const crossed = (lastZ - g.z) * (z - g.z) < 0
-      if (crossed) {
+      // 只算從正面(場地側)穿入：朝遠離場地中心方向通過，背面進不算
+      const fromFront = (z - lastZ) * g.z > 0
+      if (crossed && fromFront) {
         const dx = dronePos.x - g.x
         const dy = dronePos.y - g.y
         if (Math.hypot(dx, dy) < GOAL_RING_R) {

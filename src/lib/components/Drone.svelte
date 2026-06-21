@@ -119,6 +119,7 @@
         vel.y *= DAMPING;
         vel.z *= DAMPING;
 
+        const startZ = droneRef.position.z; // 移動前的位置，用來判斷從哪一側接近球門
         droneRef.position.x += vel.x;
         droneRef.position.y += vel.y;
         droneRef.position.z += vel.z;
@@ -155,6 +156,20 @@
                     vel.y -= j * normal.y;
                     vel.z -= j * normal.z;
                 }
+            }
+
+            // 單向開口：只能從正面(場地側)穿過；從背面回穿會被擋下並反彈
+            const dirBack = Math.sign(G.z); // 正面→背面的方向
+            const odx = droneRef.position.x - G.x;
+            const ody = droneRef.position.y - G.y;
+            if (
+                Math.hypot(odx, ody) < GOAL_RING_R &&         // 在開口範圍內
+                (startZ - G.z) * dirBack > 0 &&               // 上一刻在背側
+                vel.z * dirBack < 0 &&                        // 正朝正面移動
+                (droneRef.position.z - G.z) * dirBack < DRONE_RADIUS // 已逼近平面
+            ) {
+                droneRef.position.z = G.z + dirBack * DRONE_RADIUS;
+                vel.z = -vel.z * RESTITUTION;
             }
         }
 
