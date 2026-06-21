@@ -17,7 +17,9 @@
     const DRONE_RADIUS = 0.2;
     const RESTITUTION = 0.5;
 
-    const PROP_SPIN = 0.6;
+    const PROP_SPIN = 24;
+    const DRONE_EMISSIVE_COLOR = "#0066FF";
+    const DRONE_EMISSIVE_INTENSITY = 20;
 
     const BOUNDS_MIN = new Vector3(-3.5, 0, -8);
     const BOUNDS_MAX = new Vector3(3.5, 5, 8);
@@ -40,6 +42,19 @@
                 const i = Number(m[1]);
                 o.userData.spinDir = i === 0 || i === 3 ? 1 : -1;
                 fins.push(o);
+            }
+
+            const materials = Array.isArray(o.material)
+                ? o.material
+                : o.material
+                    ? [o.material]
+                    : [];
+            for (const material of materials) {
+                if (material.name === "Led strip - Friends" && material.emissiveMap) {
+                    material.emissive.set(DRONE_EMISSIVE_COLOR);
+                    material.emissiveIntensity = DRONE_EMISSIVE_INTENSITY;
+                    material.needsUpdate = true;
+                }
             }
         });
     });
