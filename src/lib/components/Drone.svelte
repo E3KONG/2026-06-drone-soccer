@@ -32,6 +32,9 @@
     const FIN_SPEED_BLUE = 25; // 此轉速(含)以上 → 藍
     const FIN_COLOR_SLOW = new Color("#FF3300");
     const FIN_COLOR_FAST = new Color("#0066FF");
+    const POINTER_DISTANCE = 0.4;
+    const POINTER_LOCAL_FORWARD = new Vector3(0, 1, 0);
+    const POINTER_TARGET_GOAL = GOALS[0];
 
     // 場地內側範圍（量測自 area.glb：地板 y=0、圍網 x±3.5 / z±8 / 頂 4.5）
     // 內縮一個無人機半徑，避免機身穿過地板與圍網
@@ -41,6 +44,7 @@
     const gltf = useGltf(droneUrl);
 
     let droneRef = $state();
+    let goalPointerRef = $state();
     const vel = { x: 0, y: 0, z: 0 };
     let yaw = 0;
 
@@ -96,6 +100,7 @@
     const moveDir = new Vector3();
     const toDrone = new Vector3();
     const normal = new Vector3();
+    const pointerDirection = new Vector3();
 
     useTask(() => {
         if (!droneRef) return;
@@ -215,9 +220,33 @@
         dronePos.y = droneRef.position.y;
         dronePos.z = droneRef.position.z;
         dronePos.yaw = yaw;
+
+        if (goalPointerRef) {
+            pointerDirection.subVectors(POINTER_TARGET_GOAL, droneRef.position);
+            if (pointerDirection.lengthSq() > 1e-6) {
+                pointerDirection.normalize();
+                goalPointerRef.position
+                    .copy(droneRef.position)
+                    .addScaledVector(pointerDirection, POINTER_DISTANCE);
+                goalPointerRef.quaternion.setFromUnitVectors(
+                    POINTER_LOCAL_FORWARD,
+                    pointerDirection,
+                );
+            }
+        }
     });
 </script>
 
 {#if $gltf}
     <T is={$gltf.scene} bind:ref={droneRef} position.y={0.5} />
 {/if}
+
+<T.Mesh bind:ref={goalPointerRef}>
+    <T.ConeGeometry args={[0.02, 0.07, 12]} />
+    <T.MeshStandardMaterial
+        color="#FFD400"
+        emissive="#FF7A00"
+        emissiveIntensity={5}
+        roughness={0}
+    />
+</T.Mesh>
