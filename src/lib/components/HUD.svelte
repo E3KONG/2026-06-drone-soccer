@@ -10,29 +10,31 @@
 <style>
   .hud {
     position: fixed;
-    top: 16px;
+    top: 20px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    align-items: baseline;
-    gap: 10px;
-    padding: 8px 22px;
-    border-radius: 999px;
-    background: rgba(0, 0, 0, 0.45);
-    font-family: system-ui, sans-serif;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 20px 2px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    font-family: "Bitcount Grid Single", system-ui, monospace;
     pointer-events: none;
     user-select: none;
     z-index: 20;
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    box-shadow: 1px 2px 0px 1px rgba(255, 255, 255, 0.1) inset;
   }
   .label {
-    font-size: 14px;
+    font-size: 18px;
     letter-spacing: 0.12em;
-    color: var(--color-white);
-    opacity: 0.8;
+    color: var(--color-black);
   }
   .value {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--color-yellow-400);
+    font-size: 36px;
+    font-weight: 400;
+    color: var(--color-blue-400);
   }
 </style>
