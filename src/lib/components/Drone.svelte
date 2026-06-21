@@ -33,8 +33,10 @@
     const FIN_COLOR_SLOW = new Color("#FF3300");
     const FIN_COLOR_FAST = new Color("#0066FF");
 
-    const BOUNDS_MIN = new Vector3(-3.5, 0, -8);
-    const BOUNDS_MAX = new Vector3(3.5, 5, 8);
+    // 場地內側範圍（量測自 area.glb：地板 y=0、圍網 x±3.5 / z±8 / 頂 4.5）
+    // 內縮一個無人機半徑，避免機身穿過地板與圍網
+    const BOUNDS_MIN = new Vector3(-3.5, 0, -8).addScalar(DRONE_RADIUS);
+    const BOUNDS_MAX = new Vector3(3.5, 4.5, 8).subScalar(DRONE_RADIUS);
 
     const gltf = useGltf(droneUrl);
 
@@ -121,13 +123,13 @@
         droneRef.position.y += vel.y;
         droneRef.position.z += vel.z;
 
-        // 碰到邊界先歸零對應軸的速度，再 clamp 位置
-        if (droneRef.position.x < BOUNDS_MIN.x || droneRef.position.x > BOUNDS_MAX.x)
-            vel.x = 0;
-        if (droneRef.position.y < BOUNDS_MIN.y || droneRef.position.y > BOUNDS_MAX.y)
-            vel.y = 0;
-        if (droneRef.position.z < BOUNDS_MIN.z ||droneRef.position.z > BOUNDS_MAX.z)
-            vel.z = 0;
+        // 撞到地板/圍網 → 以相同回彈係數反彈（與撞球門環一致）
+        if (droneRef.position.x < BOUNDS_MIN.x && vel.x < 0) vel.x = -vel.x * RESTITUTION;
+        else if (droneRef.position.x > BOUNDS_MAX.x && vel.x > 0) vel.x = -vel.x * RESTITUTION;
+        if (droneRef.position.y < BOUNDS_MIN.y && vel.y < 0) vel.y = -vel.y * RESTITUTION;
+        else if (droneRef.position.y > BOUNDS_MAX.y && vel.y > 0) vel.y = -vel.y * RESTITUTION;
+        if (droneRef.position.z < BOUNDS_MIN.z && vel.z < 0) vel.z = -vel.z * RESTITUTION;
+        else if (droneRef.position.z > BOUNDS_MAX.z && vel.z > 0) vel.z = -vel.z * RESTITUTION;
 
         droneRef.position.clamp(BOUNDS_MIN, BOUNDS_MAX);
 
