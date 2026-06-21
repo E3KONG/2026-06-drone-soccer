@@ -1,7 +1,7 @@
 <script>
     import { T, useTask } from "@threlte/core";
     import { useGltf } from "@threlte/extras";
-    import { MathUtils, Quaternion, Euler, Vector3 } from "three";
+    import { MathUtils, Quaternion, Euler, Vector3, Color } from "three";
     import droneUrl from "../../assets/drone-soccer.glb?url";
     import { input } from "../state/input.svelte.ts";
     import { dronePos } from "../state/droneState.svelte.ts";
@@ -20,6 +20,18 @@
     const PROP_SPIN = 24;
     const DRONE_EMISSIVE_COLOR = "#0066FF";
     const DRONE_EMISSIVE_INTENSITY = 20;
+
+    // 螺旋槳 motor mixing：各旋翼依輸入微調轉速（quadcopter 飛控原理）
+    const MIX_THROTTLE = 12; // 升降：四片同向
+    const MIX_PITCH = 8; // 前後：前/後兩片相反
+    const MIX_ROLL = 8; // 左右：左/右兩片相反
+    const MIX_YAW = 8; // 偏航：同轉向的對角加速
+    const FIN_SPEED_MIN_CLAMP = 4; // 轉速下限，避免反轉/停轉
+    const FIN_SPEED_SMOOTH = 0.08; // 轉速與顏色的平滑係數（越小越緩）
+    const FIN_SPEED_RED = 15; // 此轉速(含)以下 → 紅
+    const FIN_SPEED_BLUE = 25; // 此轉速(含)以上 → 藍
+    const FIN_COLOR_SLOW = new Color("#FF3300");
+    const FIN_COLOR_FAST = new Color("#0066FF");
 
     const BOUNDS_MIN = new Vector3(-3.5, 0, -8);
     const BOUNDS_MAX = new Vector3(3.5, 5, 8);
@@ -41,6 +53,18 @@
             if (m) {
                 const i = Number(m[1]);
                 o.userData.spinDir = i === 0 || i === 3 ? 1 : -1;
+                o.userData.sx = Math.sign(o.position.x) || 1; // 右為正
+                o.userData.sz = Math.sign(o.position.z) || 1; // 後為正
+                o.userData.curSpeed = PROP_SPIN;
+                // 每片各自 clone 材質，才能依轉速獨立上色
+                const baseMat = Array.isArray(o.material)
+                    ? o.material[0]
+                    : o.material;
+                if (baseMat) {
+                    const finMat = baseMat.clone();
+                    o.material = finMat;
+                    o.userData.finMat = finMat;
+                }
                 fins.push(o);
             }
 
@@ -144,10 +168,31 @@
 
         droneRef.quaternion.copy(qYaw).multiply(qTilt);
 
-        // 螺旋槳持續旋轉，移動越快轉越快
-        const speed = Math.hypot(vel.x, vel.y, vel.z);
-        const spin = PROP_SPIN + speed * 3;
-        for (const f of fins) f.rotateY(spin * f.userData.spinDir);
+        // 螺旋槳 motor mixing：依 throttle/pitch/roll/yaw 算各片目標轉速
+        for (const f of fins) {
+            const ud = f.userData;
+            const target = Math.max(
+                FIN_SPEED_MIN_CLAMP,
+                PROP_SPIN +
+                    input.throttle * MIX_THROTTLE -
+                    ud.sx * input.roll * MIX_ROLL -
+                    ud.sz * input.pitch * MIX_PITCH +
+                    ud.spinDir * input.yaw * MIX_YAW,
+            );
+            // 平滑轉速（不瞬間跳變）
+            ud.curSpeed += (target - ud.curSpeed) * FIN_SPEED_SMOOTH;
+            f.rotateY(ud.curSpeed * ud.spinDir);
+            // diffuse 顏色由平滑後的轉速決定：慢=紅、快=藍（漸變，不發光）
+            if (ud.finMat) {
+                const k = MathUtils.clamp(
+                    (ud.curSpeed - FIN_SPEED_RED) /
+                        (FIN_SPEED_BLUE - FIN_SPEED_RED),
+                    0,
+                    1,
+                );
+                ud.finMat.color.copy(FIN_COLOR_SLOW).lerp(FIN_COLOR_FAST, k);
+            }
+        }
 
         dronePos.x = droneRef.position.x;
         dronePos.y = droneRef.position.y;
