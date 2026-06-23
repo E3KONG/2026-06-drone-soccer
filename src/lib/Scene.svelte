@@ -16,7 +16,7 @@
   {#if !isTouchDevice}
     <Environment url={hdriUrl} isBackground />
   {/if}
-  <T.Color attach="background" args={[isTouchDevice ? '#d9eef6' : '#111827']} />
+  <T.Color attach="background" args={[isTouchDevice ? '#F1F1F1' : '#F1F1F1']} />
   <T.AmbientLight intensity={isTouchDevice ? 0.8 : 0.4} />
   <T.DirectionalLight position={[5, 10, 5]} intensity={isTouchDevice ? 1.4 : 1} />
   <Arena />
