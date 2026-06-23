@@ -7,17 +7,25 @@
   import Goal from './components/Goal.svelte'
   import Effects from './components/Effects.svelte'
   import hdriUrl from '../assets/studio-hdri.exr?url'
+  import { isTouchDevice } from './device'
+
+  const maxDpr = isTouchDevice ? 1.25 : 2
 </script>
 
-<Canvas>
-  <Environment url={hdriUrl} isBackground />
-  <T.AmbientLight intensity={0.4} />
-  <T.DirectionalLight position={[5, 10, 5]} intensity={1} />
+<Canvas dpr={[1, maxDpr]}>
+  {#if !isTouchDevice}
+    <Environment url={hdriUrl} isBackground />
+  {/if}
+  <T.Color attach="background" args={[isTouchDevice ? '#d9eef6' : '#111827']} />
+  <T.AmbientLight intensity={isTouchDevice ? 0.8 : 0.4} />
+  <T.DirectionalLight position={[5, 10, 5]} intensity={isTouchDevice ? 1.4 : 1} />
   <Arena />
   <Drone />
   <Goal />
   <Camera />
-  <Effects />
+  {#if !isTouchDevice}
+    <Effects />
+  {/if}
 </Canvas>
 
 <style>
