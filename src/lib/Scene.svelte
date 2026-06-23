@@ -26,9 +26,7 @@
   <Drone />
   <Goal />
   <Camera />
-  {#if !isTouchDevice}
-    <Effects />
-  {/if}
+  <Effects />
 </Canvas>
 
 <style>
