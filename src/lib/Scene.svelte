@@ -15,7 +15,7 @@
 
 <Canvas dpr={[1, maxDpr]}>
   {#if isTouchDevice}
-    <Environment url={envUrl} />
+    <Environment url={envUrl} isBackground />
   {:else}
     <Environment url={hdriUrl} isBackground />
   {/if}

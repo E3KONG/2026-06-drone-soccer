@@ -9,6 +9,8 @@ A 3D drone soccer practice simulator embedded as an iframe component in TWReport
 pnpm install
 pnpm run dev -- --host
 pnpm build
+
+gh workflow run deploy.yml --ref optimization
 ```
 
 ---
