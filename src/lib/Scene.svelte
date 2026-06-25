@@ -8,7 +8,7 @@
   import Goal from './components/Goal.svelte'
   import Effects from './components/Effects.svelte'
   import hdriFullUrl from '../assets/hdri-full.exr?url'
-  import hdriCompressUrl from '../assets/hdri-compress.png?url'
+  import hdriCompressUrl from '../assets/hdri-compress_1K.jpg?url'
 
   const isTouchDevice = typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0
   const maxDpr = isTouchDevice ? 1.25 : 2

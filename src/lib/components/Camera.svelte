@@ -40,6 +40,7 @@
     }
 
     const handlePointerDown = (event) => {
+      if (event.pointerType === 'touch') return
       if (event.button !== 0) return
       lastPointerX = event.clientX
       lastPointerY = event.clientY

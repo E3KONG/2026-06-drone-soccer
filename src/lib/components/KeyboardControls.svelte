@@ -3,6 +3,9 @@
 
   const pressed = new Set()
 
+  // Caps Lock / Shift send uppercase letters; normalise so WASD still works.
+  const norm = (key) => (key.length === 1 ? key.toLowerCase() : key)
+
   function update() {
     input.throttle = (pressed.has('w') ? 1 : 0) + (pressed.has('s') ? -1 : 0)
     input.yaw      = (pressed.has('d') ? -1 : 0) + (pressed.has('a') ? 1 : 0)
@@ -14,12 +17,12 @@
     if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
       e.preventDefault()
     }
-    pressed.add(e.key)
+    pressed.add(norm(e.key))
     update()
   }
 
   function onkeyup(e) {
-    pressed.delete(e.key)
+    pressed.delete(norm(e.key))
     update()
   }
 </script>

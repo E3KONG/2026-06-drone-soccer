@@ -592,7 +592,7 @@
     border: 0;
     background: transparent;
     color: rgba(255, 255, 255, 0.94);
-    font-family: inherit;
+    font-family: "WDXL Lubrifont TC", system-ui, sans-serif;
     font-size: clamp(34px, 3.35vw, 64px);
     line-height: 1.05;
     opacity: 0.5;
