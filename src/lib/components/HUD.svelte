@@ -455,7 +455,12 @@
     color: rgba(255, 255, 255, 0.94);
     font-size: clamp(34px, 3.35vw, 64px);
     line-height: 1.05;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+    opacity: 0.5;
+    pointer-events: pointer;
+    transition: all 0.15s ease-in-out;
+  }
+  .pause-label:hover {
+    opacity: 1;
   }
   .timer,
   .score-hud {
@@ -497,14 +502,15 @@
     right: 33px;
     align-items: center;
     justify-content: center;
-    width: 45px;
-    min-width: 45px;
-    height: 46px;
+    width: 35px;
+    min-width: 35px;
+    aspect-ratio: 1;
     padding: 0;
     border: 0;
+    opacity: 0.5;
     background: transparent;
     cursor: pointer;
-    transition: filter 0.15s ease-in-out;
+    transition: all 0.15s ease-in-out;
   }
   .fullscreen-button img {
     width: 100%;
@@ -512,7 +518,8 @@
   }
   .fullscreen-button:hover,
   .fullscreen-button[aria-pressed="true"] {
-    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+    opacity: 1;
   }
   .controls-hud {
     --key-base: clamp(20px, 3.4vw, 50px);
@@ -612,6 +619,11 @@
   }
   @media (max-width: 760px), (pointer: coarse) {
     .controls-hud {
+      display: none;
+    }
+  }
+  @media (pointer: coarse) {
+    .fullscreen-button {
       display: none;
     }
   }
