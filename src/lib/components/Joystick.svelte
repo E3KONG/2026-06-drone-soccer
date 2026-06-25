@@ -1,9 +1,9 @@
 <script>
   import nipplejs from "nipplejs";
   import { input } from "../state/input.svelte.ts";
-  import { colors } from "../constants/colors.ts";
 
   const isTouch = matchMedia("(pointer: coarse)").matches;
+  const JOYSTICK_COLOR = "#575757";
 
   let leftZone = $state();
   let rightZone = $state();
@@ -23,12 +23,12 @@
     const left = nipplejs.create({
       ...common,
       zone: leftZone,
-      color: colors.gray[700],
+      color: JOYSTICK_COLOR,
     });
     const right = nipplejs.create({
       ...common,
       zone: rightZone,
-      color: colors.gray[700],
+      color: JOYSTICK_COLOR,
     });
 
     left.on("move", (evt) => {
