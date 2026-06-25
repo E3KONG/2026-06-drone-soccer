@@ -40,6 +40,10 @@
     const POINTER_LOCAL_FORWARD = new Vector3(0, 1, 0);
     const POINTER_TARGET_GOAL = GOALS[0];
 
+    const FRONT_CUBE_POS = [0, 0.0025, -0.135];
+    const FRONT_CUBE_SIZE = [0.005, 0.01, 0.02];
+    const FRONT_CUBE_EMISSION = 10;
+
     const BOUNDS_MIN = new Vector3(-3.5, 0, -8).addScalar(DRONE_RADIUS);
     const BOUNDS_MAX = new Vector3(3.5, 4.5, 8).subScalar(DRONE_RADIUS);
 
@@ -230,7 +234,16 @@
 </script>
 
 {#if $gltf}
-    <T is={$gltf.scene} bind:ref={droneRef} position={[0,0.2,6.5]} />
+    <T is={$gltf.scene} bind:ref={droneRef} position={[0,0.2,6.5]}>
+        <T.Mesh position={FRONT_CUBE_POS}>
+            <T.BoxGeometry args={FRONT_CUBE_SIZE} />
+            <T.MeshStandardMaterial
+                color="#0066FF"
+                emissive="#0066FF"
+                emissiveIntensity={FRONT_CUBE_EMISSION}
+            />
+        </T.Mesh>
+    </T>
 {/if}
 
 <T.Mesh bind:ref={goalPointerRef}>
