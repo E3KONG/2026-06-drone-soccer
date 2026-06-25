@@ -26,7 +26,7 @@
     const MIX_PITCH = 8; // 前後：前/後兩片相反
     const MIX_ROLL = 8; // 左右：左/右兩片相反
     const MIX_YAW = 8; // 偏航：同轉向的對角加速
-    const FIN_SPEED_MIN_CLAMP = 4; // 轉速下限，避免反轉/停轉
+    const FIN_SPEED_MIN_CLAMP = 0; // 轉速下限，避免反轉/停轉
     const FIN_SPEED_SMOOTH = 0.08; // 轉速與顏色的平滑係數（越小越緩）
     const FIN_SPEED_RED = 15; // 此轉速(含)以下 → 紅
     const FIN_SPEED_BLUE = 25; // 此轉速(含)以上 → 藍
@@ -61,7 +61,7 @@
                 o.userData.spinDir = i === 0 || i === 3 ? 1 : -1;
                 o.userData.sx = Math.sign(o.position.x) || 1; // 右為正
                 o.userData.sz = Math.sign(o.position.z) || 1; // 後為正
-                o.userData.curSpeed = PROP_SPIN;
+                o.userData.curSpeed = 0;
                 // 每片各自 clone 材質，才能依轉速獨立上色
                 const baseMat = Array.isArray(o.material)
                     ? o.material[0]
@@ -191,11 +191,14 @@
         droneRef.quaternion.copy(qYaw).multiply(qTilt);
 
         // 螺旋槳 motor mixing：依 throttle/pitch/roll/yaw 算各片目標轉速
+        // 落地時不轉（怠速 0），離地才轉到 PROP_SPIN
+        const airborne = droneRef.position.y > BOUNDS_MIN.y + 0.01;
+        const baseSpin = airborne ? PROP_SPIN : 0;
         for (const f of fins) {
             const ud = f.userData;
             const target = Math.max(
                 FIN_SPEED_MIN_CLAMP,
-                PROP_SPIN +
+                baseSpin +
                     input.throttle * MIX_THROTTLE -
                     ud.sx * input.roll * MIX_ROLL -
                     ud.sz * input.pitch * MIX_PITCH +
@@ -212,7 +215,12 @@
                     0,
                     1,
                 );
-                ud.finMat.color.copy(FIN_COLOR_SLOW).lerp(FIN_COLOR_FAST, k);
+                // 轉速→顏色：停轉(0)為黑，升速時淡入紅，再轉藍
+                const fade = MathUtils.clamp(ud.curSpeed / FIN_SPEED_RED, 0, 1);
+                ud.finMat.color
+                    .copy(FIN_COLOR_SLOW)
+                    .lerp(FIN_COLOR_FAST, k)
+                    .multiplyScalar(fade);
             }
         }
 
@@ -238,7 +246,7 @@
 </script>
 
 {#if $gltf}
-    <T is={$gltf.scene} bind:ref={droneRef} position.y={0.5} />
+    <T is={$gltf.scene} bind:ref={droneRef} position={[0,0.2,6.5]} />
 {/if}
 
 <T.Mesh bind:ref={goalPointerRef}>

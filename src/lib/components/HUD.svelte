@@ -331,11 +331,12 @@
     animation: score-flash-pop 1.5s ease-out both;
     filter: blur(5px);
   }
-  .flash-idle :global([id^="Flash-trapezoid"] path),
+  .flash-idle :global([id^="Flash-trapezoid"] path) {
+    opacity: 0;
+  }
   .flash-idle :global([id^="Flash-parallelogram"] path) {
     opacity: 0;
   }
-  .flash-idle.scored :global([id^="Flash-trapezoid"] path),
   .flash-idle.scored :global([id^="Flash-parallelogram"] path) {
     animation-name: flash-pop;
     animation-duration: 1.2s;
