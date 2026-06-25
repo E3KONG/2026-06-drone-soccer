@@ -1,0 +1,9 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="button-nocorner">
+<path id="button-frame" d="M49.5859 59L59 49.5859V10.4141L49.5859 1H10.4141L1 10.4141V49.5859L10.4141 59H49.5859Z" stroke="white" stroke-width="2"/>
+<path id="button-flash" d="M0 0L10 0L0 10L0 0Z" fill="white"/>
+<path id="button-flash_2" d="M0 60L-4.37114e-07 50L10 60L0 60Z" fill="white"/>
+<path id="button-flash_3" d="M60 0L60 10L50 -4.37114e-07L60 0Z" fill="white"/>
+<path id="button-flash_4" d="M60 60L50 60L60 50L60 60Z" fill="white"/>
+</g>
+</svg>

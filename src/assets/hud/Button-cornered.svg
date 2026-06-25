@@ -1,0 +1,6 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="button-cornered">
+<path id="button-frame" d="M59 59L1 59L1 0.999997L44.5859 0.999999L59 15.4141L59 59Z" stroke="white" stroke-width="2"/>
+<path id="button-flash" d="M60 4.37107e-07L45 -1.31134e-06L60 15L60 4.37107e-07Z" fill="white"/>
+</g>
+</svg>
