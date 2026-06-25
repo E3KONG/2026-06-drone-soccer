@@ -5,6 +5,7 @@
     import droneUrl from "../../assets/drone-soccer.glb?url";
     import { input } from "../state/input.svelte.ts";
     import { dronePos } from "../state/droneState.svelte.ts";
+    import { warning } from "../state/warning.svelte.ts";
     import { GOALS, GOAL_RING_R, GOAL_TUBE_R } from "./Goal.svelte";
 
     const DAMPING = 0.92;
@@ -159,17 +160,28 @@
                 if (vn < 0) vel.addScaledVector(normal, -(1 + RESTITUTION) * vn);
             }
 
-            const dirBack = Math.sign(G.z);
             const odx = droneRef.position.x - G.x;
             const ody = droneRef.position.y - G.y;
-            if (
-                Math.hypot(odx, ody) < GOAL_RING_R &&
-                (startZ - G.z) * dirBack > 0 &&
-                vel.z * dirBack < 0 &&
-                (droneRef.position.z - G.z) * dirBack < DRONE_RADIUS
-            ) {
-                droneRef.position.z = G.z + dirBack * DRONE_RADIUS;
-                vel.z = -vel.z * RESTITUTION;
+            const inOpening = Math.hypot(odx, ody) < GOAL_RING_R;
+            if (G === GOALS[0]) {
+                const dirBack = Math.sign(G.z);
+                if (
+                    inOpening &&
+                    (startZ - G.z) * dirBack > 0 &&
+                    vel.z * dirBack < 0 &&
+                    (droneRef.position.z - G.z) * dirBack < DRONE_RADIUS
+                ) {
+                    droneRef.position.z = G.z + dirBack * DRONE_RADIUS;
+                    vel.z = -vel.z * RESTITUTION;
+                    warning.count++;
+                }
+            } else {
+                const side = Math.sign(startZ - G.z) || 1;
+                if (inOpening && (droneRef.position.z - G.z) * side < DRONE_RADIUS) {
+                    droneRef.position.z = G.z + side * DRONE_RADIUS;
+                    vel.z = -vel.z * RESTITUTION;
+                    warning.count++;
+                }
             }
         }
 
@@ -202,15 +214,15 @@
             }
         }
 
-        if (++_finLogTick % 20 === 0) {
-            console.log(
-                "fin curSpeed:",
-                fins.map((f) => f.userData.curSpeed.toFixed(2)).join("  "),
-                "| throttleSmooth:", throttleSmooth.toFixed(2),
-                "| in:", `thr=${input.throttle} pit=${input.pitch} rol=${input.roll} yaw=${input.yaw}`,
-                "| y:", droneRef.position.y.toFixed(2),
-            );
-        }
+        // if (++_finLogTick % 20 === 0) {
+        //     console.log(
+        //         "fin curSpeed:",
+        //         fins.map((f) => f.userData.curSpeed.toFixed(2)).join("  "),
+        //         "| throttleSmooth:", throttleSmooth.toFixed(2),
+        //         "| in:", `thr=${input.throttle} pit=${input.pitch} rol=${input.roll} yaw=${input.yaw}`,
+        //         "| y:", droneRef.position.y.toFixed(2),
+        //     );
+        // }
 
         dronePos.x = droneRef.position.x;
         dronePos.y = droneRef.position.y;

@@ -1,7 +1,6 @@
 <script module>
   import { Vector3 } from 'three'
 
-  // 球門環：中心線半徑 / 管半徑(用於碰撞)，兩端各一個
   export const GOAL_RING_R = 0.44
   export const GOAL_TUBE_R = 0.16
   export const GOALS = [
@@ -86,19 +85,18 @@
 
   useTask((delta) => {
     const z = dronePos.z
-    for (let i = 0; i < GOALS.length; i++) {
-      const g = GOALS[i]
-      // 穿越球門所在的 z 平面
-      const crossed = (lastZ - g.z) * (z - g.z) < 0
-      // 只算從正面(場地側)穿入：朝遠離場地中心方向通過，背面進不算
-      const fromFront = (z - lastZ) * g.z > 0
-      if (crossed && fromFront) {
-        const dx = dronePos.x - g.x
-        const dy = dronePos.y - g.y
-        if (Math.hypot(dx, dy) < GOAL_RING_R) {
-          score.value++
-          triggerGoalGlow()
-        }
+    // 只在 A 門(GOALS[0]) 計分；B 門(GOALS[1]) 不可進球也不可穿越
+    const g = GOALS[0]
+    // 穿越球門所在的 z 平面
+    const crossed = (lastZ - g.z) * (z - g.z) < 0
+    // 只算從正面(場地側)穿入：朝遠離場地中心方向通過，背面進不算
+    const fromFront = (z - lastZ) * g.z > 0
+    if (crossed && fromFront) {
+      const dx = dronePos.x - g.x
+      const dy = dronePos.y - g.y
+      if (Math.hypot(dx, dy) < GOAL_RING_R) {
+        score.value++
+        triggerGoalGlow()
       }
     }
 

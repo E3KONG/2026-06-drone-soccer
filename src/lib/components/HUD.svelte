@@ -1,6 +1,7 @@
 <script>
   import { score } from '../state/score.svelte.ts'
-  import staticUiSvg from '../../assets/hud/StaticUI.svg?raw'
+  import { warning } from '../state/warning.svelte.ts'
+  import staticUiRaw from '../../assets/hud/StaticUI.svg?raw'
   import flashSvg from '../../assets/hud/Flash.svg?raw'
   import flashTriangleUrl from '../../assets/hud/Flash-triangle.svg?url'
   import buttonCorneredSvg from '../../assets/hud/Button-cornered.svg?raw'
@@ -8,10 +9,15 @@
   import iconArrowUrl from '../../assets/hud/Icon-arrow.svg?url'
   import iconFullScreenUrl from '../../assets/hud/Icon-fullScreen.svg?url'
 
+  const staticUiSvg = staticUiRaw.replaceAll('fill="white"', 'fill="currentColor"')
+
   let isFullscreen = $state(false)
   let showGoalFlash = $state(false)
   let previousScore = score.value
   let goalFlashTimer
+  let showWarning = $state(false)
+  let previousWarn = warning.count
+  let warningTimer
   let pressedKeys = $state({
     w: false,
     a: false,
@@ -91,6 +97,19 @@
 
     return () => clearTimeout(goalFlashTimer)
   })
+
+  $effect(() => {
+    if (warning.count === previousWarn) return
+
+    previousWarn = warning.count
+    showWarning = true
+    clearTimeout(warningTimer)
+    warningTimer = setTimeout(() => {
+      showWarning = false
+    }, 1000)
+
+    return () => clearTimeout(warningTimer)
+  })
 </script>
 
 <svelte:window
@@ -101,7 +120,7 @@
   onwebkitfullscreenchange={syncFullscreenState}
 />
 
-<div class="static-ui" aria-hidden="true">
+<div class="static-ui" class:warn={showWarning} aria-hidden="true">
   <div class="static-symbols">{@html staticUiSvg}</div>
 
   <svg class="static-corner top left" viewBox="0 0 857 380">
@@ -154,7 +173,7 @@
   <div class="score-flash" aria-hidden="true">{score.value}</div>
 {/if}
 
-<div class="flash-idle" class:scored={showGoalFlash} aria-hidden="true">
+<div class="flash-idle" class:scored={showGoalFlash} class:warn={showWarning} aria-hidden="true">
   <div class="flash-corner top left">{@html flashSvg}</div>
   <div class="flash-corner top right mirror-x">{@html flashSvg}</div>
   <div class="flash-corner bottom left mirror-y">{@html flashSvg}</div>
@@ -167,6 +186,12 @@
 </div>
 
 <div class="timer" aria-label="Time remaining">03:00</div>
+
+{#if showWarning}
+  <div class="warning-text" role="alert">
+    無人機足機比賽中禁止從球門背後穿越及穿越自方破門
+  </div>
+{/if}
 
 <div class="score-hud" aria-label={`Score ${score.value}`}>
   {score.value}
@@ -279,6 +304,12 @@
   }
   .static-ui {
     opacity: 0.5;
+    color: #fff;
+  }
+  .static-ui.warn {
+    opacity: 1;
+    color: var(--color-red-400);
+    filter: drop-shadow(0 0 8px var(--color-red-400));
   }
   .static-symbols,
   .static-corner,
@@ -348,6 +379,10 @@
   }
   .flash-idle.scored :global(path) {
     fill: var(--color-yellow-400);
+    transition: fill 0s;
+  }
+  .flash-idle.warn :global(path) {
+    fill: var(--color-red-400);
     transition: fill 0s;
   }
   .flash-idle :global([id^="Flash-line"] path),
@@ -466,6 +501,20 @@
   .score-hud {
     --hud-u: min(0.052083333vw, 0.092592593vh);
     --label-gap: calc(39 * var(--hud-u));
+  }
+  .warning-text {
+    position: fixed;
+    --hud-u: min(0.052083333vw, 0.092592593vh);
+    top: calc(150 * var(--hud-u));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    pointer-events: none;
+    white-space: nowrap;
+    color: var(--color-red-400);
+    font-family: "WDXL Lubrifont TC", system-ui, sans-serif;
+    font-size: clamp(14px, 1.5vw, 26px);
+    text-shadow: 0 0 10px var(--color-red-400);
   }
   .timer {
     top: calc(30 * var(--hud-u) + var(--label-gap));
