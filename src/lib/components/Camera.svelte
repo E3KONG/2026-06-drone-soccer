@@ -3,7 +3,7 @@
   import { MathUtils, Vector3 } from 'three'
   import { dronePos } from '../state/droneState.svelte.ts'
 
-  const MIN_DISTANCE = 0.75
+  const MIN_DISTANCE = 0.5
   const MAX_DISTANCE = 4
   const DEFAULT_DISTANCE = Math.hypot(1.25, 0.5)
   const DEFAULT_PITCH = Math.atan2(0.5, 1.25)
@@ -129,7 +129,5 @@
   near={0.1}
   far={1000}
   bind:ref={camRef}
-  position.x={0}
-  position.y={0.2}
-  position.z={1}
+  position={[0, 0.2, 6.5]}
 />

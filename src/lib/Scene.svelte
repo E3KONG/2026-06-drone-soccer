@@ -6,8 +6,8 @@
   import Camera from './components/Camera.svelte'
   import Goal from './components/Goal.svelte'
   import Effects from './components/Effects.svelte'
-  import hdriUrl from '../assets/studio-hdri.exr?url'
-  import envUrl from '../assets/studio-env.png?url'
+  import hdriFullUrl from '../assets/hdri-full.exr?url'
+  import hdriCompressUrl from '../assets/hdri-compress.png?url'
 
   const isTouchDevice = typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0
   const maxDpr = isTouchDevice ? 1.25 : 2
@@ -15,9 +15,9 @@
 
 <Canvas dpr={[1, maxDpr]}>
   {#if isTouchDevice}
-    <Environment url={envUrl} isBackground />
+    <Environment url={hdriCompressUrl} isBackground />
   {:else}
-    <Environment url={hdriUrl} isBackground />
+    <Environment url={hdriFullUrl} isBackground />
   {/if}
   <T.Color attach="background" args={['#F1F1F1']} />
   <T.AmbientLight intensity={0.4} />
