@@ -1,6 +1,7 @@
 <script>
   import { score } from '../state/score.svelte.ts'
   import { warning } from '../state/warning.svelte.ts'
+  import { game } from '../state/game.svelte.ts'
   import staticUiRaw from '../../assets/hud/StaticUI.svg?raw'
   import flashSvg from '../../assets/hud/Flash.svg?raw'
   import flashTriangleUrl from '../../assets/hud/Flash-triangle.svg?url'
@@ -84,6 +85,18 @@
     if (root.requestFullscreen) await root.requestFullscreen()
     else if (root.webkitRequestFullscreen) root.webkitRequestFullscreen()
   }
+
+  const formatTime = (s) =>
+    `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
+
+  $effect(() => {
+    if (game.mode !== 'match') return
+    const id = setInterval(() => {
+      if (game.timeLeft > 0) game.timeLeft -= 1
+      else clearInterval(id)
+    }, 1000)
+    return () => clearInterval(id)
+  })
 
   $effect(() => {
     if (score.value === previousScore) return
@@ -185,7 +198,9 @@
   <span>停</span>
 </div>
 
-<div class="timer" aria-label="Time remaining">03:00</div>
+{#if game.mode === 'match'}
+  <div class="timer" aria-label="Time remaining">{formatTime(game.timeLeft)}</div>
+{/if}
 
 {#if showWarning}
   <div class="warning-text" role="alert">
