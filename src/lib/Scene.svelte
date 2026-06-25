@@ -8,8 +8,8 @@
   import Effects from './components/Effects.svelte'
   import hdriUrl from '../assets/studio-hdri.exr?url'
   import envUrl from '../assets/studio-env.png?url'
-  import { isTouchDevice } from './device'
 
+  const isTouchDevice = typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0
   const maxDpr = isTouchDevice ? 1.25 : 2
 </script>
 
