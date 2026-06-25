@@ -3,6 +3,7 @@
   import { warning } from '../state/warning.svelte.ts'
   import { game, restartGame } from '../state/game.svelte.ts'
   import PauseMenu from './PauseMenu.svelte'
+  import EndScreen from './EndScreen.svelte'
   import staticUiRaw from '../../assets/hud/StaticUI.svg?raw'
   import flashSvg from '../../assets/hud/Flash.svg?raw'
   import flashTriangleUrl from '../../assets/hud/Flash-triangle.svg?url'
@@ -55,6 +56,7 @@
   }
 
   const togglePause = () => {
+    if (game.over) return
     game.paused = !game.paused
   }
 
@@ -122,10 +124,12 @@
   })
 
   $effect(() => {
-    if (game.mode !== 'match' || game.paused || (game.countdown ?? 0) > 0) return
+    if (game.mode !== 'match' || game.paused || game.over || (game.countdown ?? 0) > 0) return
     const id = setInterval(() => {
-      if (game.timeLeft > 0) game.timeLeft -= 1
-      else clearInterval(id)
+      if (game.timeLeft > 0) {
+        game.timeLeft -= 1
+        if (game.timeLeft === 0) game.over = true
+      }
     }, 1000)
     return () => clearInterval(id)
   })
@@ -240,6 +244,10 @@
 
 {#if game.paused}
   <PauseMenu />
+{/if}
+
+{#if game.over}
+  <EndScreen />
 {/if}
 
 {#if game.mode === 'match'}

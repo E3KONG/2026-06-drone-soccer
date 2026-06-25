@@ -1,6 +1,7 @@
 <script>
   import { Canvas, T } from '@threlte/core'
   import { Environment } from '@threlte/extras'
+  import { WebGLRenderer } from 'three'
   import Arena from './components/Arena.svelte'
   import Drone from './components/Drone.svelte'
   import Camera from './components/Camera.svelte'
@@ -11,9 +12,18 @@
 
   const isTouchDevice = typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0
   const maxDpr = isTouchDevice ? 1.25 : 2
+
+  const createRenderer = (canvas) =>
+    new WebGLRenderer({
+      canvas,
+      powerPreference: 'high-performance',
+      antialias: true,
+      alpha: true,
+      preserveDrawingBuffer: true,
+    })
 </script>
 
-<Canvas dpr={[1, maxDpr]}>
+<Canvas dpr={[1, maxDpr]} {createRenderer}>
   {#if isTouchDevice}
     <Environment url={hdriCompressUrl} isBackground />
   {:else}

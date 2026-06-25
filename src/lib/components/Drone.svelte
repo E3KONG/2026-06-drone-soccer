@@ -146,7 +146,7 @@
     });
 
     useTask(() => {
-        if (!droneRef || game.paused || (game.countdown ?? 0) > 0) return;
+        if (!droneRef || game.paused || game.over || (game.countdown ?? 0) > 0) return;
 
         yawVel += input.yaw * YAW_ACCEL;
         yawVel *= YAW_DAMPING;
