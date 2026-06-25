@@ -5,7 +5,12 @@
   const start = (mode) => {
     game.mode = mode
     score.value = 0
-    if (mode === 'match') game.timeLeft = 180
+    if (mode === 'match') {
+      game.timeLeft = 180
+      game.countdown = 3
+    } else {
+      game.countdown = null
+    }
     game.started = true
   }
 </script>
