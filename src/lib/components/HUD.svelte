@@ -1,6 +1,9 @@
 <script>
   import { score } from '../state/score.svelte.ts'
   import { warning } from '../state/warning.svelte.ts'
+  import { game, restartGame } from '../state/game.svelte.ts'
+  import PauseMenu from './PauseMenu.svelte'
+  import EndScreen from './EndScreen.svelte'
   import staticUiRaw from '../../assets/hud/StaticUI.svg?raw'
   import flashSvg from '../../assets/hud/Flash.svg?raw'
   import flashTriangleUrl from '../../assets/hud/Flash-triangle.svg?url'
@@ -52,18 +55,41 @@
     return null
   }
 
+  const togglePause = () => {
+    if (game.over) return
+    game.paused = !game.paused
+  }
+
+  let holdRestartTimer
+
   const onkeydown = (event) => {
+    if (event.key === 'Escape') {
+      togglePause()
+      return
+    }
     const key = getTrackedKey(event.key)
     if (key) pressedKeys[key] = true
+    if (key === 'r' && !holdRestartTimer) {
+      holdRestartTimer = setTimeout(() => {
+        holdRestartTimer = null
+        restartGame()
+      }, 2000)
+    }
   }
 
   const onkeyup = (event) => {
     const key = getTrackedKey(event.key)
     if (key) pressedKeys[key] = false
+    if (key === 'r') {
+      clearTimeout(holdRestartTimer)
+      holdRestartTimer = null
+    }
   }
 
   const resetPressedKeys = () => {
     for (const key in pressedKeys) pressedKeys[key] = false
+    clearTimeout(holdRestartTimer)
+    holdRestartTimer = null
   }
 
   const fullscreenElement = () =>
@@ -84,6 +110,29 @@
     if (root.requestFullscreen) await root.requestFullscreen()
     else if (root.webkitRequestFullscreen) root.webkitRequestFullscreen()
   }
+
+  const formatTime = (s) =>
+    `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
+
+  $effect(() => {
+    if (game.countdown === null || game.paused) return
+    const id = setInterval(() => {
+      if (game.countdown > 0) game.countdown -= 1
+      else game.countdown = null
+    }, 1000)
+    return () => clearInterval(id)
+  })
+
+  $effect(() => {
+    if (game.mode !== 'match' || game.paused || game.over || (game.countdown ?? 0) > 0) return
+    const id = setInterval(() => {
+      if (game.timeLeft > 0) {
+        game.timeLeft -= 1
+        if (game.timeLeft === 0) game.over = true
+      }
+    }, 1000)
+    return () => clearInterval(id)
+  })
 
   $effect(() => {
     if (score.value === previousScore) return
@@ -173,6 +222,14 @@
   <div class="score-flash" aria-hidden="true">{score.value}</div>
 {/if}
 
+{#if game.countdown !== null}
+  {#key game.countdown}
+    <div class="countdown" aria-hidden="true">
+      {game.countdown === 0 ? 'GO!' : game.countdown}
+    </div>
+  {/key}
+{/if}
+
 <div class="flash-idle" class:scored={showGoalFlash} class:warn={showWarning} aria-hidden="true">
   <div class="flash-corner top left">{@html flashSvg}</div>
   <div class="flash-corner top right mirror-x">{@html flashSvg}</div>
@@ -180,12 +237,22 @@
   <div class="flash-corner bottom right mirror-xy">{@html flashSvg}</div>
 </div>
 
-<div class="pause-label" aria-hidden="true">
+<button class="pause-label" type="button" aria-label="暫停" onclick={togglePause}>
   <span>暫</span>
   <span>停</span>
-</div>
+</button>
 
-<div class="timer" aria-label="Time remaining">03:00</div>
+{#if game.paused}
+  <PauseMenu />
+{/if}
+
+{#if game.over}
+  <EndScreen />
+{/if}
+
+{#if game.mode === 'match'}
+  <div class="timer" aria-label="Time remaining">{formatTime(game.timeLeft)}</div>
+{/if}
 
 {#if showWarning}
   <div class="warning-text" role="alert">
@@ -230,7 +297,8 @@
   </div>
 
   <div class="key-cluster reset">
-    <span class="key" class:active={pressedKeys.r}>
+    <span class="key restart-key" class:active={pressedKeys.r}>
+      <i class="key-fill"></i>
       <span class="key-frame">{@html buttonNocornerSvg}</span>
       <span>R</span>
     </span>
@@ -362,6 +430,39 @@
     animation: score-flash-pop 1.5s ease-out both;
     filter: blur(5px);
   }
+  .countdown {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 25;
+    pointer-events: none;
+    color: #0066ff40;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: #06F;
+    font-family: "WDXL Lubrifont TC", system-ui, sans-serif;
+    font-size: clamp(160px, 40vw, 520px);
+    line-height: 1;
+    text-shadow: 0 0 30px var(--color-blue-400), 0 0 60px #0066ff40;
+    animation: countdown-pop 1s ease-out both;
+  }
+  @keyframes countdown-pop {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(1.6);
+    }
+    20% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    80% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.85);
+    }
+  }
   .flash-idle :global([id^="Flash-trapezoid"] path) {
     opacity: 0;
   }
@@ -486,12 +587,17 @@
     top: 20px;
     left: 21px;
     flex-direction: column;
-    pointer-events: none;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
     color: rgba(255, 255, 255, 0.94);
+    font-family: inherit;
     font-size: clamp(34px, 3.35vw, 64px);
     line-height: 1.05;
     opacity: 0.5;
-    pointer-events: pointer;
+    pointer-events: auto;
+    cursor: pointer;
     transition: all 0.15s ease-in-out;
   }
   .pause-label:hover {
@@ -620,7 +726,7 @@
     line-height: 1;
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.25);
     opacity: 0.5;
-    transition: all 0.15s ease-in-out,
+    transition: all 0.15s ease-in-out;
   }
   .key-frame,
   .arrow-icon {
@@ -659,6 +765,35 @@
   .key.active {
     opacity: 1;
     filter: drop-shadow(0 0 5px rgba(255, 255, 255, 1));
+  }
+  .restart-key .key-fill {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: calc(var(--key) * 0.12);
+    background: var(--color-red-400);
+    opacity: 0;
+  }
+  .restart-key.active .key-fill {
+    animation: key-fill 2s linear forwards;
+  }
+  .restart-key.active {
+    filter: none;
+  }
+  .restart-key.active > span:not(.key-frame) {
+    color: var(--color-red-400);
+    text-shadow: none;
+  }
+  .restart-key.active .key-frame :global([id^="button-frame"]) {
+    stroke: var(--color-red-400);
+  }
+  .restart-key.active .key-frame :global([id^="button-flash"]) {
+    fill: none;
+  }
+  @keyframes key-fill {
+    to {
+      opacity: 1;
+    }
   }
   @media (max-width: 900px) {
     .fullscreen-button {

@@ -6,6 +6,7 @@
     import { input } from "../state/input.svelte.ts";
     import { dronePos } from "../state/droneState.svelte.ts";
     import { warning } from "../state/warning.svelte.ts";
+    import { game } from "../state/game.svelte.ts";
     import { GOALS, GOAL_RING_R, GOAL_TUBE_R } from "./Goal.svelte";
 
     const DAMPING = 0.92;
@@ -47,6 +48,8 @@
 
     const BOUNDS_MIN = new Vector3(-3.5, 0, -8).addScalar(DRONE_RADIUS);
     const BOUNDS_MAX = new Vector3(3.5, 4.5, 8).subScalar(DRONE_RADIUS);
+
+    const SPAWN = new Vector3(0, 0.2, 6.5);
 
     const gltf = useGltf(droneUrl);
 
@@ -106,8 +109,44 @@
     const normal = new Vector3();
     const pointerDirection = new Vector3();
 
-    useTask(() => {
+    const syncFollowers = () => {
+        dronePos.x = droneRef.position.x;
+        dronePos.y = droneRef.position.y;
+        dronePos.z = droneRef.position.z;
+        dronePos.yaw = yaw;
+
+        if (goalPointerRef) {
+            pointerDirection.subVectors(POINTER_TARGET_GOAL, droneRef.position);
+            if (pointerDirection.lengthSq() > 1e-6) {
+                pointerDirection.normalize();
+                goalPointerRef.position
+                    .copy(droneRef.position)
+                    .addScaledVector(pointerDirection, POINTER_DISTANCE);
+                goalPointerRef.quaternion.setFromUnitVectors(
+                    POINTER_LOCAL_FORWARD,
+                    pointerDirection,
+                );
+            }
+        }
+    };
+
+    $effect(() => {
+        game.resetTick;
         if (!droneRef) return;
+        droneRef.position.copy(SPAWN);
+        eBody.set(0, 0, 0);
+        droneRef.quaternion.setFromEuler(eBody);
+        vel.set(0, 0, 0);
+        yaw = 0;
+        yawVel = 0;
+        throttleSmooth = 0;
+        currentPitch = 0;
+        currentRoll = 0;
+        syncFollowers();
+    });
+
+    useTask(() => {
+        if (!droneRef || game.paused || game.over || (game.countdown ?? 0) > 0) return;
 
         yawVel += input.yaw * YAW_ACCEL;
         yawVel *= YAW_DAMPING;
@@ -224,29 +263,12 @@
         //     );
         // }
 
-        dronePos.x = droneRef.position.x;
-        dronePos.y = droneRef.position.y;
-        dronePos.z = droneRef.position.z;
-        dronePos.yaw = yaw;
-
-        if (goalPointerRef) {
-            pointerDirection.subVectors(POINTER_TARGET_GOAL, droneRef.position);
-            if (pointerDirection.lengthSq() > 1e-6) {
-                pointerDirection.normalize();
-                goalPointerRef.position
-                    .copy(droneRef.position)
-                    .addScaledVector(pointerDirection, POINTER_DISTANCE);
-                goalPointerRef.quaternion.setFromUnitVectors(
-                    POINTER_LOCAL_FORWARD,
-                    pointerDirection,
-                );
-            }
-        }
+        syncFollowers();
     });
 </script>
 
 {#if $gltf}
-    <T is={$gltf.scene} bind:ref={droneRef} position={[0,0.2,6.5]}>
+    <T is={$gltf.scene} bind:ref={droneRef} position={SPAWN.toArray()}>
         <T.Mesh position={FRONT_CUBE_POS}>
             <T.BoxGeometry args={FRONT_CUBE_SIZE} />
             <T.MeshStandardMaterial
