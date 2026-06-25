@@ -1,7 +1,7 @@
 <script>
   import { Canvas, T } from '@threlte/core'
   import { Environment } from '@threlte/extras'
-  import { WebGLRenderer } from 'three'
+  import { WebGLRenderer, VSMShadowMap } from 'three'
   import Arena from './components/Arena.svelte'
   import Drone from './components/Drone.svelte'
   import Camera from './components/Camera.svelte'
@@ -12,15 +12,20 @@
 
   const isTouchDevice = typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0
   const maxDpr = isTouchDevice ? 1.25 : 2
+  const shadowMapSize = isTouchDevice ? 1024 : 2048
 
-  const createRenderer = (canvas) =>
-    new WebGLRenderer({
+  const createRenderer = (canvas) => {
+    const renderer = new WebGLRenderer({
       canvas,
       powerPreference: 'high-performance',
       antialias: true,
       alpha: true,
       preserveDrawingBuffer: true,
     })
+    renderer.shadowMap.enabled = true
+    renderer.shadowMap.type = VSMShadowMap
+    return renderer
+  }
 </script>
 
 <Canvas dpr={[1, maxDpr]} {createRenderer}>
@@ -31,8 +36,27 @@
   {/if}
   <T.Color attach="background" args={['#F1F1F1']} />
   <T.AmbientLight intensity={0.4} />
-  <T.DirectionalLight position={[5, 10, 5]} intensity={1} />
+  <T.DirectionalLight
+    position={[3, 10, -3]}
+    intensity={1}
+    castShadow
+    shadow.mapSize.width={shadowMapSize}
+    shadow.mapSize.height={shadowMapSize}
+    shadow.camera.near={1}
+    shadow.camera.far={50}
+    shadow.camera.left={-10}
+    shadow.camera.right={10}
+    shadow.camera.top={10}
+    shadow.camera.bottom={-10}
+    shadow.bias={-0.0005}
+    shadow.radius={3}
+    shadow.blurSamples={8}
+  />
   <Arena />
+  <T.Mesh rotation.x={-Math.PI / 2} position.y={0.01} receiveShadow>
+    <T.PlaneGeometry args={[7, 16]} />
+    <T.ShadowMaterial opacity={0.5} />
+  </T.Mesh>
   <Drone />
   <Goal />
   <Camera />

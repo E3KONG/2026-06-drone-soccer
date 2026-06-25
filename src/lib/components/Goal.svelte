@@ -61,6 +61,8 @@
           ? [o.material]
           : []
       if (!sourceMaterials.length) return
+      o.castShadow = true
+      o.receiveShadow = true
 
       const materials = sourceMaterials.map((m) => {
         const material = m.emissiveMap ? m.clone() : m
