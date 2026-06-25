@@ -31,8 +31,10 @@
     </div>
   </div>
 
-  <button class="mode match" type="button" onclick={() => start('match')}>3分鐘挑戰</button>
-  <button class="mode practice" type="button" onclick={() => start('practice')}>讓我先練習</button>
+  <div class="actions">
+    <button class="game-button" type="button" onclick={() => start('match')}>3分鐘挑戰</button>
+    <button class="game-button secondary" type="button" onclick={() => start('practice')}>讓我先練習</button>
+  </div>
 </div>
 
 <style>
@@ -93,30 +95,11 @@
   .stripes.right span {
     background: linear-gradient(to left, transparent, rgba(0, 102, 255, 0.7));
   }
-  .mode {
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(22 * var(--u));
     margin-top: calc(60 * var(--u));
-    padding: calc(13 * var(--u)) calc(40 * var(--u));
-    border: calc(3 * var(--u)) solid;
-    border-radius: calc(16 * var(--u));
-    background: transparent;
-    font-family: inherit;
-    font-size: calc(64 * var(--u));
-    line-height: 1;
-    letter-spacing: calc(-1.92 * var(--u));
-    cursor: pointer;
-    transition: filter 0.15s ease-in-out, transform 0.15s ease-in-out;
-  }
-  .mode.match {
-    color: #06f;
-    border-color: #06f;
-  }
-  .mode.practice {
-    margin-top: calc(22 * var(--u));
-    color: #66a3ff;
-    border-color: #66a3ff;
-  }
-  .mode:hover {
-    filter: drop-shadow(0 0 8px currentColor);
-    transform: scale(1.03);
   }
 </style>

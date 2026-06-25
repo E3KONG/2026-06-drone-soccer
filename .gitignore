@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Generated font subsets + source cache (see scripts/build-fonts.mjs)
+.fontcache
+src/assets/fonts/SweiMarkerSans-*-subset.woff2
+src/assets/fonts/.subset-hash
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

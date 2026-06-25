@@ -17,10 +17,10 @@
     const cx = out.width / 2
     ctx.textAlign = 'center'
     ctx.fillStyle = '#06f'
-    ctx.font = `${out.width * 0.16}px "WDXL Lubrifont TC", system-ui, sans-serif`
+    ctx.font = `${out.width * 0.16}px "Swei Marker Sans", system-ui, sans-serif`
     ctx.fillText(`${score.value}`, cx, out.height * 0.42)
-    ctx.font = `${out.width * 0.035}px "WDXL Lubrifont TC", system-ui, sans-serif`
-    ctx.fillText(`我射進了 ${score.value} 球！`, cx, out.height * 0.52)
+    ctx.font = `${out.width * 0.035}px "Swei Marker Sans", system-ui, sans-serif`
+    ctx.fillText(`射進 ${score.value} 球！`, cx, out.height * 0.52)
 
     out.toBlob((blob) => {
       const a = document.createElement('a')
@@ -43,8 +43,8 @@
   </p>
 
   <div class="actions">
-    <button type="button" onclick={replay}>再玩一次</button>
-    <button type="button" onclick={screenshot}>截圖分享</button>
+    <button class="game-button" type="button" onclick={replay}>再玩一次</button>
+    <button class="game-button" type="button" onclick={screenshot}>截圖分享</button>
   </div>
 </div>
 
@@ -59,7 +59,7 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    font-family: "WDXL Lubrifont TC", system-ui, sans-serif;
+    font-family: "Swei Marker Sans", system-ui, sans-serif;
     user-select: none;
   }
   .backdrop {
@@ -85,27 +85,11 @@
     letter-spacing: calc(-1.2 * var(--u));
     text-align: center;
     color: rgba(0, 102, 255, 0.8);
+    font-weight: 500;
   }
   .actions {
     display: flex;
     gap: calc(32 * var(--u));
     margin-top: calc(56 * var(--u));
-  }
-  button {
-    padding: calc(13 * var(--u)) calc(40 * var(--u));
-    border: calc(3 * var(--u)) solid #06f;
-    border-radius: calc(16 * var(--u));
-    background: transparent;
-    font-family: inherit;
-    font-size: calc(48 * var(--u));
-    line-height: 1;
-    letter-spacing: calc(-1.44 * var(--u));
-    color: #06f;
-    cursor: pointer;
-    transition: filter 0.15s ease-in-out, transform 0.15s ease-in-out;
-  }
-  button:hover {
-    filter: drop-shadow(0 0 8px currentColor);
-    transform: scale(1.03);
   }
 </style>

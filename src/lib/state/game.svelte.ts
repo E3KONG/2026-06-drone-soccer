@@ -6,7 +6,7 @@ export const game = $state({
   started: false,
   paused: false,
   mode: 'practice' as Mode,
-  timeLeft: 5,
+  timeLeft: 180,
   countdown: null as number | null,
   over: false,
   resetTick: 0,
@@ -15,7 +15,7 @@ export const game = $state({
 export function restartGame() {
   score.value = 0
   if (game.mode === 'match') {
-    game.timeLeft = 5
+    game.timeLeft = 180
     game.countdown = 3
   }
   game.over = false

@@ -13,9 +13,9 @@
 
 <div class="pause-menu">
   <div class="backdrop"></div>
-  <button type="button" onclick={resume}>繼續</button>
-  <button type="button" onclick={restart}>重新開始</button>
-  <button type="button" onclick={toMenu}>返回主選單</button>
+  <button class="game-button" type="button" onclick={resume}>繼續</button>
+  <button class="game-button" type="button" onclick={restart}>重新開始</button>
+  <button class="game-button" type="button" onclick={toMenu}>返回主選單</button>
 </div>
 
 <style>
@@ -39,22 +39,5 @@
     background: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(37.5px);
     -webkit-backdrop-filter: blur(37.5px);
-  }
-  button {
-    padding: calc(13 * var(--u)) calc(40 * var(--u));
-    border: calc(3 * var(--u)) solid #06f;
-    border-radius: calc(16 * var(--u));
-    background: transparent;
-    font-family: inherit;
-    font-size: calc(64 * var(--u));
-    line-height: 1;
-    letter-spacing: calc(-1.92 * var(--u));
-    color: #06f;
-    cursor: pointer;
-    transition: filter 0.15s ease-in-out, transform 0.15s ease-in-out;
-  }
-  button:hover {
-    filter: drop-shadow(0 0 8px currentColor);
-    transform: scale(1.03);
   }
 </style>
