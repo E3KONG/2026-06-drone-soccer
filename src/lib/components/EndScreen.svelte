@@ -1,34 +1,12 @@
 <script>
-  import { restartGame } from '../state/game.svelte.ts'
+  import { game, restartGame } from '../state/game.svelte.ts'
   import { score } from '../state/score.svelte.ts'
 
   const replay = () => restartGame()
-
-  const screenshot = () => {
-    const canvas = document.querySelector('canvas')
-    if (!canvas) return
-
-    const out = document.createElement('canvas')
-    out.width = canvas.width
-    out.height = canvas.height
-    const ctx = out.getContext('2d')
-    ctx.drawImage(canvas, 0, 0)
-
-    const cx = out.width / 2
-    ctx.textAlign = 'center'
-    ctx.fillStyle = '#06f'
-    ctx.font = `${out.width * 0.16}px "Swei Marker Sans", system-ui, sans-serif`
-    ctx.fillText(`${score.value}`, cx, out.height * 0.42)
-    ctx.font = `${out.width * 0.035}px "Swei Marker Sans", system-ui, sans-serif`
-    ctx.fillText(`射進 ${score.value} 球！`, cx, out.height * 0.52)
-
-    out.toBlob((blob) => {
-      const a = document.createElement('a')
-      a.href = URL.createObjectURL(blob)
-      a.download = `drone-soccer-${score.value}.png`
-      a.click()
-      URL.revokeObjectURL(a.href)
-    })
+  const toMenu = () => {
+    game.paused = false
+    game.started = false
+    game.over = false
   }
 </script>
 
@@ -44,7 +22,7 @@
 
   <div class="actions">
     <button class="game-button" type="button" onclick={replay}>再玩一次</button>
-    <button class="game-button" type="button" onclick={screenshot}>截圖分享</button>
+    <button class="game-button" type="button" onclick={toMenu}>回到選單</button>
   </div>
 </div>
 

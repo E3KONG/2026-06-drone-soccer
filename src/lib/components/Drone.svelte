@@ -49,7 +49,7 @@
     const BOUNDS_MIN = new Vector3(-3.5, 0, -8).addScalar(DRONE_RADIUS);
     const BOUNDS_MAX = new Vector3(3.5, 4.5, 8).subScalar(DRONE_RADIUS);
 
-    const SPAWN = new Vector3(0, 0.2, 6.5);
+    const SPAWN = new Vector3(1, 0.2, 6.5);
 
     const gltf = useGltf(droneUrl);
 
