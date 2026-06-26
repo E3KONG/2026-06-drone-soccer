@@ -23,6 +23,7 @@
   let showWarning = $state(false)
   let previousWarn = warning.count
   let warningTimer
+  let dimmed = $state(false)
   let pressedKeys = $state({
     w: false,
     a: false,
@@ -141,6 +142,7 @@
 
     previousScore = score.value
     showGoalFlash = true
+    dimmed = true
     clearTimeout(goalFlashTimer)
     goalFlashTimer = setTimeout(() => {
       showGoalFlash = false
@@ -154,6 +156,7 @@
 
     previousWarn = warning.count
     showWarning = true
+    dimmed = true
     clearTimeout(warningTimer)
     warningTimer = setTimeout(() => {
       showWarning = false
@@ -171,7 +174,7 @@
   onwebkitfullscreenchange={syncFullscreenState}
 />
 
-<div class="static-ui" class:warn={showWarning} aria-hidden="true">
+<div class="static-ui" class:warn={showWarning} class:scored={showGoalFlash} class:dimmed aria-hidden="true">
   <div class="static-symbols">{@html staticUiSvg}</div>
 
   <svg class="static-corner top left" viewBox="0 0 857 380">
@@ -383,11 +386,44 @@
   .static-ui {
     opacity: 0.5;
     color: #fff;
+    animation: static-idle-fade 2s ease-out 5s forwards;
+  }
+  .static-ui.dimmed {
+    opacity: 0.25;
   }
   .static-ui.warn {
-    opacity: 1;
     color: var(--color-red-400);
     filter: drop-shadow(0 0 8px var(--color-red-400));
+    animation: static-warn-tint 1s ease-out forwards;
+  }
+  .static-ui.scored {
+    animation: static-score-tint 1s ease-out forwards;
+  }
+  @keyframes static-idle-fade {
+    to {
+      opacity: 0.2;
+    }
+  }
+  @keyframes static-warn-tint {
+    0%,
+    70% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.25;
+    }
+  }
+  @keyframes static-score-tint {
+    0%,
+    70% {
+      opacity: 0.75;
+      color: var(--color-yellow-400);
+      filter: drop-shadow(0 0 8px var(--color-yellow-400));
+    }
+    100% {
+      opacity: 0.25;
+      color: #fff;
+    }
   }
   .static-symbols,
   .static-corner,
@@ -877,6 +913,12 @@
     .score-hud {
       font-size: 115px;
       bottom: 6vh;
+    }
+    .warning-text {
+      top: 14vh;
+      white-space: nowrap;
+      max-width: 80vw;
+      text-align: center;
     }
   }
   @keyframes flash-fade {
