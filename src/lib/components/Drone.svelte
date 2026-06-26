@@ -8,6 +8,7 @@
     import { warning } from "../state/warning.svelte.ts";
     import { game } from "../state/game.svelte.ts";
     import { GOALS, GOAL_RING_R, GOAL_TUBE_R } from "./Goal.svelte";
+    import { enemies, ENEMY_RADIUS, originalShell } from "../state/enemyState.svelte.ts";
 
     const DAMPING = 0.92;
     const GRAVITY = 0.02;
@@ -96,6 +97,16 @@
                     material.emissive.set(DRONE_EMISSIVE_COLOR);
                     material.emissiveIntensity = DRONE_EMISSIVE_INTENSITY;
                     material.needsUpdate = true;
+                }
+                if (material.name === "Drone-Shell - Main") {
+                    if (!originalShell.mat) originalShell.mat = material;
+                    const white = material.clone();
+                    white.color.set("#ffffff");
+                    white.map = null;
+                    white.needsUpdate = true;
+                    o.material = Array.isArray(o.material)
+                        ? o.material.map((mm) => (mm === material ? white : mm))
+                        : white;
                 }
             }
         });
@@ -222,6 +233,18 @@
                     vel.z = -vel.z * RESTITUTION;
                     warning.count++;
                 }
+            }
+        }
+
+        const enemySurface = DRONE_RADIUS + ENEMY_RADIUS;
+        for (const E of enemies) {
+            toDrone.copy(droneRef.position).sub(E);
+            const d = toDrone.length();
+            if (d < enemySurface && d > 1e-4) {
+                normal.copy(toDrone).divideScalar(d);
+                droneRef.position.addScaledVector(normal, enemySurface - d);
+                const vn = vel.dot(normal);
+                if (vn < 0) vel.addScaledVector(normal, -(1 + RESTITUTION) * vn);
             }
         }
 

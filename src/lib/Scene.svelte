@@ -4,6 +4,7 @@
   import { WebGLRenderer, VSMShadowMap } from 'three'
   import Arena from './components/Arena.svelte'
   import Drone from './components/Drone.svelte'
+  import Enemies from './components/Enemies.svelte'
   import Camera from './components/Camera.svelte'
   import Goal from './components/Goal.svelte'
   import Effects from './components/Effects.svelte'
@@ -58,6 +59,7 @@
     <T.ShadowMaterial opacity={0.5} />
   </T.Mesh>
   <Drone />
+  <Enemies />
   <Goal />
   <Camera />
   <Effects />
