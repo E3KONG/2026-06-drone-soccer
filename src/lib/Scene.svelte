@@ -1,7 +1,7 @@
 <script>
   import { Canvas, T } from '@threlte/core'
   import { Environment } from '@threlte/extras'
-  import { WebGLRenderer, VSMShadowMap } from 'three'
+  import { WebGLRenderer, PCFShadowMap } from 'three'
   import Arena from './components/Arena.svelte'
   import Drone from './components/Drone.svelte'
   import Enemies from './components/Enemies.svelte'
@@ -23,13 +23,11 @@
       alpha: true,
       preserveDrawingBuffer: true,
     })
-    renderer.shadowMap.enabled = true
-    renderer.shadowMap.type = VSMShadowMap
     return renderer
   }
 </script>
 
-<Canvas dpr={[1, maxDpr]} {createRenderer}>
+<Canvas dpr={[1, maxDpr]} shadows={PCFShadowMap} {createRenderer}>
   {#if isTouchDevice}
     <Environment url={hdriCompressUrl} isBackground />
   {:else}
