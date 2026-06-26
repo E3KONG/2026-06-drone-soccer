@@ -264,7 +264,7 @@
 {/if}
 
 {#if game.mode === 'match'}
-  <div class="timer" aria-label="Time remaining">{formatTime(game.timeLeft)}</div>
+  <div class="timer" class:low={game.timeLeft <= 30} aria-label="Time remaining">{formatTime(game.timeLeft)}</div>
 {/if}
 
 {#if showWarning}
@@ -716,6 +716,10 @@
     text-align: center;
     text-shadow: 0 0 12px rgba(255, 255, 255, 0.28);
   }
+  .timer.low {
+    color: var(--color-red-400);
+    text-shadow: 0 0 12px var(--color-red-400);
+  }
   .score-hud {
     bottom: calc(35 * var(--hud-u) + var(--label-gap));
     left: 50%;
@@ -914,11 +918,16 @@
       font-size: 115px;
       bottom: 6vh;
     }
+    .flash-triangle.top {
+      top: 16vh;
+    }
     .warning-text {
-      top: 14vh;
-      white-space: nowrap;
+      top: 16vh;
+      white-space: normal;
       max-width: 80vw;
       text-align: center;
+      line-height: 1.4;
+      font-size: 16px;
     }
   }
   @keyframes flash-fade {
