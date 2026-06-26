@@ -11,6 +11,8 @@
   import buttonNocornerSvg from '../../assets/hud/Button-nocorner.svg?raw'
   import iconArrowUrl from '../../assets/hud/Icon-arrow.svg?url'
   import iconFullScreenUrl from '../../assets/hud/Icon-fullScreen.svg?url'
+  import iconPauseUrl from '../../assets/hud/Icon-pause.svg?url'
+  import iconReplayUrl from '../../assets/hud/Icon-replay.svg?url'
 
   const staticUiSvg = staticUiRaw.replaceAll('fill="white"', 'fill="currentColor"')
 
@@ -213,10 +215,10 @@
   >
     <use href="#Extend_horizontal" />
   </svg>
-
-  <img class="flash-triangle top" src={flashTriangleUrl} alt="" />
-  <img class="flash-triangle bottom" src={flashTriangleUrl} alt="" />
 </div>
+
+<img class="flash-triangle top" src={flashTriangleUrl} alt="" />
+<img class="flash-triangle bottom" src={flashTriangleUrl} alt="" />
 
 {#if showGoalFlash}
   <div class="score-flash" aria-hidden="true">{score.value}</div>
@@ -240,6 +242,14 @@
 <button class="pause-label" type="button" aria-label="暫停" onclick={togglePause}>
   <span>暫</span>
   <span>停</span>
+</button>
+
+<button class="icon-button pause" type="button" aria-label="暫停" onclick={togglePause}>
+  <img src={iconPauseUrl} alt="" />
+</button>
+
+<button class="icon-button restart" type="button" aria-label="重新開始" onclick={restartGame}>
+  <img src={iconReplayUrl} alt="" />
 </button>
 
 {#if game.paused}
@@ -569,7 +579,8 @@
     right: calc(var(--edge-x) + var(--flash-gap-x));
   }
   .flash-triangle {
-    position: absolute;
+    position: fixed;
+    z-index: 14;
     left: 50%;
     width: 14px;
     height: 7px;
@@ -601,6 +612,38 @@
     transition: all 0.15s ease-in-out;
   }
   .pause-label:hover {
+    opacity: 1;
+  }
+  .icon-button {
+    position: fixed;
+    top: 20px;
+    z-index: 20;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: clamp(40px, 11vw, 56px);
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    opacity: 0.6;
+    background: transparent;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+  }
+  .icon-button.pause {
+    left: 18px;
+  }
+  .icon-button.restart {
+    right: 18px;
+  }
+  .icon-button img {
+    width: 100%;
+    height: 100%;
+  }
+  .icon-button:hover,
+  .icon-button:active {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
     opacity: 1;
   }
   .timer,
@@ -807,8 +850,33 @@
     }
   }
   @media (pointer: coarse) {
-    .fullscreen-button {
+    .fullscreen-button,
+    .pause-label {
       display: none;
+    }
+    .icon-button {
+      display: flex;
+    }
+  }
+  @media (orientation: portrait) {
+    .static-ui,
+    .flash-idle {
+      --hud-u: min(0.092592593vw, 0.052083333vh);
+      --extend-w: max(0px, calc(50vh - var(--edge-x) - var(--corner-w) + var(--extend-overlap)));
+      inset: auto;
+      top: 50%;
+      left: 50%;
+      width: 100vh;
+      height: 100vw;
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
+    .timer {
+      font-size: 60px;
+      top: 6vh;
+    }
+    .score-hud {
+      font-size: 115px;
+      bottom: 6vh;
     }
   }
   @keyframes flash-fade {
