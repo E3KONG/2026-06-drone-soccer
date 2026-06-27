@@ -68,7 +68,10 @@
         if (!g) return;
         fins = [];
         g.scene.traverse((o) => {
-            if (o.isMesh) o.castShadow = true;
+            if (o.isMesh) {
+                o.castShadow = true;
+                o.receiveShadow = true;
+            }
             const m = o.name.match(/^Fin_export_(\d+)/);
             if (m) {
                 const i = Number(m[1]);
