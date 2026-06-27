@@ -66,7 +66,6 @@
   let yaw = 0
   let yawVel = 0
   let throttleSmooth = 0
-  let _finLogTick = 0
 
   let fins = []
   $effect(() => {
@@ -289,16 +288,6 @@
           .multiplyScalar(fade)
       }
     }
-
-    // if (++_finLogTick % 20 === 0) {
-    //     console.log(
-    //         "fin curSpeed:",
-    //         fins.map((f) => f.userData.curSpeed.toFixed(2)).join("  "),
-    //         "| throttleSmooth:", throttleSmooth.toFixed(2),
-    //         "| in:", `thr=${input.throttle} pit=${input.pitch} rol=${input.roll} yaw=${input.yaw}`,
-    //         "| y:", droneRef.position.y.toFixed(2),
-    //     );
-    // }
 
     syncFollowers()
   })

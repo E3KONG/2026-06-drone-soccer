@@ -6,13 +6,12 @@
     resetInput()
     game.paused = false
   }
-  const restart = restartGame
 </script>
 
 <div class="pause-menu">
   <div class="backdrop"></div>
   <button class="game-button" type="button" onclick={resume}>繼續</button>
-  <button class="game-button" type="button" onclick={restart}>重新開始</button>
+  <button class="game-button" type="button" onclick={restartGame}>重新開始</button>
   <button class="game-button" type="button" onclick={toMenu}>返回主選單</button>
 </div>
 

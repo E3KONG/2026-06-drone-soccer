@@ -28,10 +28,6 @@
     }
   }
 
-  const triggerGoalGlow = () => {
-    goalGlowTimer = GOAL_GLOW_DURATION
-  }
-
   const easeInOut = (t) => 0.5 - Math.cos(t * Math.PI) * 0.5
 
   const getGlowIntensity = () => {
@@ -108,7 +104,7 @@
       const dy = dronePos.y - g.y
       if (Math.hypot(dx, dy) < GOAL_RING_R) {
         score.value++
-        triggerGoalGlow()
+        goalGlowTimer = GOAL_GLOW_DURATION
       }
     }
 

@@ -1,8 +1,6 @@
 <script>
   import { restartGame, toMenu } from '../state/game.svelte.ts'
   import { score } from '../state/score.svelte.ts'
-
-  const replay = () => restartGame()
 </script>
 
 <div class="end">
@@ -15,7 +13,7 @@
   </p>
 
   <div class="actions">
-    <button class="game-button" type="button" onclick={replay}>再玩一次</button>
+    <button class="game-button" type="button" onclick={restartGame}>再玩一次</button>
     <button class="game-button" type="button" onclick={toMenu}>回到選單</button>
   </div>
 </div>
