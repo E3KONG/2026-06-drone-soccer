@@ -1,6 +1,8 @@
 <script>
   import { restartGame, toMenu } from '../state/game.svelte.ts'
   import { score } from '../state/score.svelte.ts'
+  import { menuNav } from '../menuNav.js'
+  import MenuItem from './MenuItem.svelte'
 </script>
 
 <div class="end">
@@ -12,9 +14,9 @@
     恭喜你，射進 {score.value} 球！歡迎將畫面截圖，到報導者的 FB 或 IG 貼文底下留言，和大家分享你的成績，有機會抽精美好禮喔！
   </p>
 
-  <div class="actions">
-    <button class="game-button" type="button" onclick={restartGame}>再玩一次</button>
-    <button class="game-button" type="button" onclick={toMenu}>回到選單</button>
+  <div class="actions" use:menuNav>
+    <MenuItem onclick={restartGame}>再玩一次</MenuItem>
+    <MenuItem onclick={toMenu}>回到選單</MenuItem>
   </div>
 </div>
 
@@ -36,7 +38,7 @@
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(37.5px);
     -webkit-backdrop-filter: blur(37.5px);
   }
@@ -61,5 +63,16 @@
     display: flex;
     gap: calc(32 * var(--u));
     margin-top: calc(56 * var(--u));
+  }
+
+  @media (orientation: portrait) {
+    .end {
+      --u: min(0.092592593vw, 0.052083333vh);
+    }
+    .actions {
+      flex-direction: column;
+      align-items: center;
+      gap: calc(30 * var(--u));
+    }
   }
 </style>

@@ -188,6 +188,7 @@
   class:warn={showWarning}
   class:scored={showGoalFlash}
   class:dimmed
+  class:paused={game.paused}
   aria-hidden="true"
 >
   <div class="static-symbols">{@html staticUiSvg}</div>
@@ -445,6 +446,14 @@
   }
   .static-ui.scored {
     animation: static-score-tint 1s ease-out forwards;
+  }
+  /* When paused, lift the frame above the pause overlay (z 40) so it stays
+     sharp and frames the pause menu instead of being blurred behind it. */
+  .static-ui.paused {
+    z-index: 45;
+    opacity: 0.6;
+    color: #fff;
+    animation: none;
   }
   @keyframes static-idle-fade {
     to {

@@ -34,28 +34,75 @@ body {
   background: var(--color-gray-900);
 }
 
-.game-button {
-  padding: calc(13 * var(--u)) calc(40 * var(--u));
-  border: calc(3 * var(--u)) solid currentColor;
-  border-radius: calc(16 * var(--u));
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: calc(5 * var(--u));
+  padding: 0;
+  border: 0;
   background: transparent;
-  font-family: "Swei Marker Sans", system-ui, sans-serif;
-  font-weight: 700;
+  cursor: pointer;
+  font-family: "WDXL Lubrifont TC", system-ui, sans-serif;
   font-size: calc(64 * var(--u));
   line-height: 1;
-  letter-spacing: calc(-1.92 * var(--u));
-  color: #06f;
-  cursor: pointer;
-  transition: filter 0.15s ease-in-out, transform 0.15s ease-in-out;
-}
-.game-button.secondary {
-  color: #66a3ff;
-}
-.game-button:hover {
   color: #fff;
-  -webkit-text-stroke-width: 0.5px;
-  -webkit-text-stroke-color: #06F;
-  background-color: #06f;
-  filter: drop-shadow(0 0 8px currentColor);
-  transform: scale(1.03);
+  text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.25);
+  transition: color 0.15s ease;
+  opacity: 0.75;
+}
+.menu-item span {
+  white-space: nowrap;
+}
+.menu-item .cursor {
+  width: 0;
+  height: calc(28 * var(--u));
+  margin-right: 0;
+  opacity: 0;
+  transition:
+    width 0.15s ease,
+    margin-right 0.15s ease,
+    opacity 0.15s ease;
+}
+.menu-item .cursor.right {
+  display: none;
+}
+.menu-item:hover,
+.menu-item:focus-visible,
+.menu-item:active,
+.menu-item.is-active {
+  outline: none;
+  opacity: 1;
+}
+.menu-item:hover .cursor,
+.menu-item:focus-visible .cursor,
+.menu-item:active .cursor,
+.menu-item.is-active .cursor {
+  width: calc(26 * var(--u));
+  margin-right: calc(5 * var(--u));
+  opacity: 1;
+}
+
+@media (orientation: portrait) {
+  .menu-item {
+    gap: calc(20 * var(--u));
+    justify-content: center;
+    font-size: calc(128 * var(--u));
+  }
+  .menu-item .cursor {
+    width: calc(52 * var(--u));
+    height: calc(56 * var(--u));
+    margin-right: 0;
+  }
+  .menu-item .cursor.right {
+    display: block;
+    transform: scaleX(-1);
+  }
+  .menu-item:hover .cursor,
+  .menu-item:focus-visible .cursor,
+  .menu-item:active .cursor,
+  .menu-item.is-active .cursor {
+    width: calc(52 * var(--u));
+    margin-right: 0;
+    opacity: 1;
+  }
 }

@@ -4,8 +4,9 @@
   import bgUrl from '../../assets/start/StartScreenBackground.jpg?url'
   import logotypeUrl from '../../assets/start/Logotype.png?url'
   import descriptionUrl from '../../assets/start/Description.png?url'
-  import selectUrl from '../../assets/hud/Icon_select.svg?url'
   import iconFullScreenUrl from '../../assets/hud/Icon-fullScreen.svg?url'
+  import { menuNav } from '../menuNav.js'
+  import MenuItem from './MenuItem.svelte'
 
   const toggleFullscreen = async () => {
     const root = document.documentElement
@@ -47,17 +48,9 @@
 
   <img class="logotype" src={logotypeUrl} alt="空中梅西 STRIKER" />
 
-  <div class="menu">
-    <button class="menu-item" type="button" onclick={() => start('practice')}>
-      <img class="cursor left" src={selectUrl} alt="" />
-      <span>練習場</span>
-      <img class="cursor right" src={selectUrl} alt="" />
-    </button>
-    <button class="menu-item" type="button" onclick={() => start('match')}>
-      <img class="cursor left" src={selectUrl} alt="" />
-      <span>3分鐘挑戰</span>
-      <img class="cursor right" src={selectUrl} alt="" />
-    </button>
+  <div class="menu" use:menuNav>
+    <MenuItem onclick={() => start('practice')}>練習場</MenuItem>
+    <MenuItem onclick={() => start('match')}>3分鐘挑戰</MenuItem>
   </div>
 
   <!-- ponytail: 設定 is visual-only; no settings system exists yet. Wire up when one does. -->
@@ -136,47 +129,7 @@
     gap: calc(15 * var(--u));
     align-items: flex-start;
   }
-  .menu-item span {
-    white-space: nowrap;
-  }
-  .menu-item {
-    display: flex;
-    align-items: center;
-    padding: 0;
-    border: 0;
-    gap: calc(5 * var(--u));
-    background: transparent;
-    cursor: pointer;
-    font: inherit;
-    font-size: calc(64 * var(--u));
-    color: rgba(255, 255, 255, 0.75);
-    text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.25);
-    transition: color 0.15s ease;
-  }
-  .menu-item .cursor {
-    width: 0;
-    height: calc(28 * var(--u));
-    margin-right: 0;
-    opacity: 0;
-    transition:
-      width 0.15s ease,
-      margin-right 0.15s ease,
-      opacity 0.15s ease;
-  }
-  .menu-item .cursor.right {
-    display: none;
-  }
-  .menu-item:hover,
-  .menu-item:focus-visible {
-    color: #fff;
-    outline: none;
-  }
-  .menu-item:hover .cursor,
-  .menu-item:focus-visible .cursor {
-    width: calc(26 * var(--u));
-    margin-right: calc(5 * var(--u));
-    opacity: 1;
-  }
+
   .settings {
     position: absolute;
     left: calc(100 * var(--u));
@@ -216,7 +169,6 @@
     color: #fff;
   }
 
-  /* Mobile: centered portrait layout (1080 x 1920 design frame) */
   @media (orientation: portrait) {
     .start {
       --u: min(0.092592593vw, 0.052083333vh);
@@ -238,27 +190,8 @@
       align-items: center;
       gap: calc(30 * var(--u));
     }
-    .menu-item {
-      gap: calc(20 * var(--u));
-      justify-content: center;
-      font-size: calc(128 * var(--u));
+    .menu :global(.menu-item) {
       color: rgba(255, 255, 255, 0.85);
-    }
-    .menu-item .cursor {
-      width: calc(52 * var(--u));
-      height: calc(56 * var(--u));
-      margin-right: 0;
-    }
-    .menu-item .cursor.right {
-      display: block;
-      transform: scaleX(-1);
-    }
-    .menu-item:hover .cursor,
-    .menu-item:focus-visible .cursor,
-    .menu-item:active .cursor {
-      width: calc(52 * var(--u));
-      margin-right: 0;
-      opacity: 1;
     }
     .settings {
       left: 50%;
