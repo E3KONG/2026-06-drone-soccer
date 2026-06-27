@@ -14,7 +14,7 @@
     originalShell,
   } from '../state/enemyState.svelte.ts'
 
-  const PlayerDroneColor = '#DDDDDD'
+  const PlayerDroneColor = '#000'
   const DRONE_EMISSIVE_COLOR = '#0066FF'
 
   const DAMPING = 0.92
@@ -33,7 +33,7 @@
   const RESTITUTION = 0.5
 
   const PROP_SPIN = 24
-  const DRONE_EMISSIVE_INTENSITY = 20
+  const DRONE_EMISSIVE_INTENSITY = 1000
 
   const MIX_THROTTLE = 12
   const MIX_PITCH = 8
@@ -43,7 +43,7 @@
   const FIN_SPEED_SMOOTH = 0.08
   const FIN_SPEED_RED = 15
   const FIN_SPEED_BLUE = 25
-  const FIN_COLOR_SLOW = new Color('#FF3300')
+  const FIN_COLOR_SLOW = new Color('#b9e8ff')
   const FIN_COLOR_FAST = new Color('#0066FF')
   const POINTER_DISTANCE = 0.4
   const POINTER_LOCAL_FORWARD = new Vector3(0, 1, 0)
@@ -51,7 +51,7 @@
 
   const FRONT_CUBE_POS = [0, 0.0025, -0.135]
   const FRONT_CUBE_SIZE = [0.005, 0.01, 0.02]
-  const FRONT_CUBE_EMISSION = 10
+  const FRONT_CUBE_EMISSION = 100
 
   const BOUNDS_MIN = new Vector3(-3.5, 0, -8).addScalar(DRONE_RADIUS)
   const BOUNDS_MAX = new Vector3(3.5, 4.5, 8).subScalar(DRONE_RADIUS)
@@ -311,7 +311,7 @@
   <T.MeshStandardMaterial
     color="#FFD400"
     emissive="#FF7A00"
-    emissiveIntensity={5}
+    emissiveIntensity={10}
     roughness={0}
   />
 </T.Mesh>

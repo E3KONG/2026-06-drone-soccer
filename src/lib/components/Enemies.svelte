@@ -16,6 +16,9 @@
   const REGION_MIN = new Vector3(-1, 3, -6.2)
   const REGION_MAX = new Vector3(1, 4, -5.5)
   const ENEMY_EMISSIVE = '#FF1A1A'
+  const FRONT_CUBE_POS = [0, 0.0025, -0.135]
+  const FRONT_CUBE_SIZE = [0.005, 0.01, 0.02]
+  const FRONT_CUBE_EMISSION = 100
 
   const MAX_SPEED = 2
   const STEER = 2.5 // 速度趨近期望值的速率，越小越柔順
@@ -112,7 +115,7 @@
           if (m && m.name === 'Led strip - Friends') {
             const c = m.clone()
             c.emissive.set(ENEMY_EMISSIVE)
-            c.emissiveIntensity = 20
+            c.emissiveIntensity = 500
             changed = true
             return c
           }
@@ -304,5 +307,14 @@
 </script>
 
 {#each models as model, i}
-  <T is={model} position={enemies[i].toArray()} />
+  <T is={model} position={enemies[i].toArray()}>
+    <T.Mesh position={FRONT_CUBE_POS}>
+      <T.BoxGeometry args={FRONT_CUBE_SIZE} />
+      <T.MeshStandardMaterial
+        color={ENEMY_EMISSIVE}
+        emissive={ENEMY_EMISSIVE}
+        emissiveIntensity={FRONT_CUBE_EMISSION}
+      />
+    </T.Mesh>
+  </T>
 {/each}

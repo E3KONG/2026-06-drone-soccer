@@ -514,7 +514,7 @@
     pointer-events: none;
     color: var(--color-yellow-400);
     font-family: 'Bitcount Grid Single', system-ui, monospace;
-    font-size: clamp(140px, 80vw, 700px);
+    font-size: clamp(140px, 90vw, 700px);
     line-height: 1;
     text-shadow:
       0 0 10px var(--color-gray-500) inset,
@@ -967,8 +967,8 @@
       top: 6vh;
     }
     .score-hud {
-      font-size: 115px;
-      bottom: 6vh;
+      font-size: 20vw;
+      bottom: 6.5vh;
     }
     .flash-triangle.top {
       top: 16vh;
