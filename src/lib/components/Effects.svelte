@@ -6,7 +6,9 @@
   import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
   import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js'
 
-  let { strength = 0.9, radius = 0.4, threshold = 2.0 } = $props()
+  const strength = 0.9
+  const radius = 0.4
+  const threshold = 2.0
 
   const { renderer, scene, camera, size, dpr, autoRender, renderStage } =
     useThrelte()
@@ -32,13 +34,6 @@
     renderPass.camera = $camera
   })
 
-  $effect(() => {
-    bloomPass.strength = strength
-    bloomPass.radius = radius
-    bloomPass.threshold = threshold
-  })
-
-  // 接管 Threlte 的渲染，改用 composer 輸出
   $effect(() => {
     autoRender.set(false)
     return () => autoRender.set(true)
