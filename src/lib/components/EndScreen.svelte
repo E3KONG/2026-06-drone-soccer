@@ -1,13 +1,8 @@
 <script>
-  import { game, restartGame } from '../state/game.svelte.ts'
+  import { restartGame, toMenu } from '../state/game.svelte.ts'
   import { score } from '../state/score.svelte.ts'
 
   const replay = () => restartGame()
-  const toMenu = () => {
-    game.paused = false
-    game.started = false
-    game.over = false
-  }
 </script>
 
 <div class="end">

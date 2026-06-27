@@ -11,3 +11,10 @@ export const input: InputState = $state({
   pitch: 0,
   roll: 0,
 })
+
+export function resetInput() {
+  input.throttle = 0
+  input.yaw = 0
+  input.pitch = 0
+  input.roll = 0
+}

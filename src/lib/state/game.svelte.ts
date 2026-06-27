@@ -1,4 +1,5 @@
 import { score } from './score.svelte.ts'
+import { resetInput } from './input.svelte.ts'
 
 type Mode = 'practice' | 'match'
 
@@ -13,6 +14,7 @@ export const game = $state({
 })
 
 export function restartGame() {
+  resetInput()
   score.value = 0
   if (game.mode === 'match') {
     game.timeLeft = 180
@@ -21,4 +23,12 @@ export function restartGame() {
   game.over = false
   game.resetTick++
   game.paused = false
+}
+
+export function toMenu() {
+  resetInput()
+  game.resetTick++
+  game.paused = false
+  game.started = false
+  game.over = false
 }

@@ -1,14 +1,12 @@
 <script>
-  import { game, restartGame } from '../state/game.svelte.ts'
+  import { game, restartGame, toMenu } from '../state/game.svelte.ts'
+  import { resetInput } from '../state/input.svelte.ts'
 
   const resume = () => {
+    resetInput()
     game.paused = false
   }
   const restart = restartGame
-  const toMenu = () => {
-    game.paused = false
-    game.started = false
-  }
 </script>
 
 <div class="pause-menu">

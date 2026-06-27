@@ -101,7 +101,7 @@
                 if (material.name === "Drone-Shell - Main") {
                     if (!originalShell.mat) originalShell.mat = material;
                     const white = material.clone();
-                    white.color.set("#ffffff");
+                    white.color.set("#DDDDDD");
                     white.map = null;
                     white.needsUpdate = true;
                     o.material = Array.isArray(o.material)
