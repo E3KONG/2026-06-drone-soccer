@@ -221,10 +221,6 @@
     .start {
       --u: min(0.092592593vw, 0.052083333vh);
     }
-    .stage {
-      width: calc(1080 * var(--u));
-      height: calc(1920 * var(--u));
-    }
     .fullscreen-button {
       display: none;
     }
@@ -237,15 +233,16 @@
     .menu {
       left: 50%;
       top: auto;
-      bottom: calc(407 * var(--u));
+      bottom: calc(480 * var(--u));
       transform: translateX(-50%);
       align-items: center;
-      gap: calc(35 * var(--u));
+      gap: calc(30 * var(--u));
     }
     .menu-item {
       gap: calc(20 * var(--u));
       justify-content: center;
       font-size: calc(128 * var(--u));
+      color: rgba(255, 255, 255, 0.85);
     }
     .menu-item .cursor {
       width: calc(52 * var(--u));

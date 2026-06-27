@@ -10,6 +10,12 @@
   const radius = 0.4
   const threshold = 2.0
 
+  // Half-res bloom on touch devices: keeps the LED glow but cuts bloom's
+  // render-target memory + fillrate ~4x, easing iOS Safari WebGL pressure.
+  const isTouchDevice =
+    typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0
+  const bloomScale = isTouchDevice ? 0.5 : 1
+
   const { renderer, scene, camera, size, dpr, autoRender, renderStage } =
     useThrelte()
 
@@ -28,6 +34,14 @@
   $effect(() => {
     composer.setPixelRatio($dpr)
     composer.setSize($size.width, $size.height)
+    // composer.setSize already sized bloomPass to the full effective resolution;
+    // override it to half on mobile (must re-apply $dpr since we bypass the composer).
+    if (bloomScale !== 1) {
+      bloomPass.setSize(
+        $size.width * $dpr * bloomScale,
+        $size.height * $dpr * bloomScale,
+      )
+    }
   })
 
   $effect(() => {
