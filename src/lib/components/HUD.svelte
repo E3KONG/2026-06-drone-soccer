@@ -239,9 +239,9 @@
 <img class="flash-triangle top" src={flashTriangleUrl} alt="" />
 <img class="flash-triangle bottom" src={flashTriangleUrl} alt="" />
 
-{#if showGoalFlash}
+<!-- {#if showGoalFlash}
   <div class="score-flash" aria-hidden="true">{score.value}</div>
-{/if}
+{/if} -->
 
 {#if game.countdown !== null}
   {#key game.countdown}
@@ -475,6 +475,7 @@
       opacity: 0.75;
       color: var(--color-yellow-400);
       filter: drop-shadow(0 0 8px var(--color-yellow-400));
+      mix-blend-mode: screen;
     }
     100% {
       opacity: 0.25;

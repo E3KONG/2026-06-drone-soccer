@@ -104,6 +104,7 @@
       const dy = dronePos.y - g.y
       if (Math.hypot(dx, dy) < GOAL_RING_R) {
         score.value++
+        score.shock = 0
         goalGlowTimer = GOAL_GLOW_DURATION
       }
     }

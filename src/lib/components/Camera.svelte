@@ -2,6 +2,7 @@
   import { T, useTask, useThrelte } from '@threlte/core'
   import { MathUtils, Vector3 } from 'three'
   import { dronePos } from '../state/droneState.svelte.ts'
+  import { score } from '../state/score.svelte.ts'
 
   const MIN_DISTANCE = 0.5
   const MAX_DISTANCE = 4
@@ -11,6 +12,14 @@
   const MAX_PITCH = 1.2
   const ROTATE_SENSITIVITY = 0.006
   const ZOOM_SENSITIVITY = 0.0015
+
+  // --- FOV punch on score ---
+  const FOV_DEFAULT = 50
+  const FOV_SCORE = 75
+  const FOV_PULSE_DURATION = 1 // seconds for the full 50→25→50 punch
+
+  let prevScore = score.value
+  let fovTimer = FOV_PULSE_DURATION // start idle
 
   const { renderer } = useThrelte()
 
@@ -107,8 +116,19 @@
     }
   })
 
-  useTask(() => {
+  useTask((delta) => {
     if (!camRef) return
+
+    if (score.value !== prevScore) {
+      prevScore = score.value
+      fovTimer = 0
+    }
+    if (fovTimer < FOV_PULSE_DURATION) {
+      fovTimer = Math.min(fovTimer + delta, FOV_PULSE_DURATION)
+      const punch = Math.sin((fovTimer / FOV_PULSE_DURATION) * Math.PI)
+      camRef.fov = MathUtils.lerp(FOV_DEFAULT, FOV_SCORE, punch)
+      camRef.updateProjectionMatrix()
+    }
 
     const orbitYaw = dronePos.yaw + orbitYawOffset
     const horizontalDistance = Math.cos(orbitPitch) * cameraDistance
@@ -126,7 +146,7 @@
 
 <T.PerspectiveCamera
   makeDefault
-  fov={50}
+  fov={FOV_DEFAULT}
   near={0.1}
   far={1000}
   bind:ref={camRef}
