@@ -1,7 +1,7 @@
 <script>
   import { game } from '../state/game.svelte.ts'
   import { score } from '../state/score.svelte.ts'
-  import bgUrl from '../../assets/start/StartScreenBackground.jpg?url'
+  import bgUrl from '../../assets/start/StartScreenBackground.webp?url'
   import logotypeUrl from '../../assets/start/Logotype.png?url'
   import descriptionUrl from '../../assets/start/Description.png?url'
   import iconFullScreenUrl from '../../assets/hud/Icon-fullScreen.svg?url'
