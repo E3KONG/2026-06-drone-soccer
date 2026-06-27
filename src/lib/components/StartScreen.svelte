@@ -1,6 +1,22 @@
 <script>
   import { game } from '../state/game.svelte.ts'
   import { score } from '../state/score.svelte.ts'
+  import bgUrl from '../../assets/start/StartScreenBackground.jpg?url'
+  import logotypeUrl from '../../assets/start/Logotype.png?url'
+  import descriptionUrl from '../../assets/start/Description.png?url'
+  import selectUrl from '../../assets/hud/Icon_select.svg?url'
+  import iconFullScreenUrl from '../../assets/hud/Icon-fullScreen.svg?url'
+
+  const toggleFullscreen = async () => {
+    const root = document.documentElement
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      if (document.exitFullscreen) await document.exitFullscreen()
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen()
+      return
+    }
+    if (root.requestFullscreen) await root.requestFullscreen()
+    else if (root.webkitRequestFullscreen) root.webkitRequestFullscreen()
+  }
 
   const start = (mode) => {
     game.mode = mode
@@ -17,33 +33,46 @@
 </script>
 
 <div class="start">
-  <div class="backdrop"></div>
+  <img class="bg" src={bgUrl} alt="" />
 
-  <h1 class="title">空中梅西你來當</h1>
+  <!-- <div class="stage"> -->
+  <button
+    class="fullscreen-button"
+    type="button"
+    aria-label="Toggle fullscreen"
+    onclick={toggleFullscreen}
+  >
+    <img src={iconFullScreenUrl} alt="" />
+  </button>
 
-  <div class="subtitle-row">
-    <div class="stripes left">
-      {#each [420, 400, 380] as w}<span style={`width:calc(${w} * var(--u))`}
-        ></span>{/each}
-    </div>
-    <p class="subtitle">挑戰無人機足球射門</p>
-    <div class="stripes right">
-      {#each [420, 400, 380] as w}<span style={`width:calc(${w} * var(--u))`}
-        ></span>{/each}
-    </div>
+  <img class="logotype" src={logotypeUrl} alt="空中梅西 STRIKER" />
+
+  <div class="menu">
+    <button class="menu-item" type="button" onclick={() => start('practice')}>
+      <img class="cursor left" src={selectUrl} alt="" />
+      <span>練習場</span>
+      <img class="cursor right" src={selectUrl} alt="" />
+    </button>
+    <button class="menu-item" type="button" onclick={() => start('match')}>
+      <img class="cursor left" src={selectUrl} alt="" />
+      <span>3分鐘挑戰</span>
+      <img class="cursor right" src={selectUrl} alt="" />
+    </button>
   </div>
 
-  <div class="actions">
-    <button class="game-button" type="button" onclick={() => start('match')}
-      >3分鐘挑戰</button
-    >
-    <button
-      class="game-button secondary"
-      type="button"
-      onclick={() => start('practice')}>讓我先練習</button
-    >
-  </div>
+  <!-- ponytail: 設定 is visual-only; no settings system exists yet. Wire up when one does. -->
+  <div class="settings">設定</div>
+  <div class="divider"></div>
+
+  <img
+    class="description"
+    src={descriptionUrl}
+    alt="挑戰無人機足球射門 drone soccer simulation"
+  />
+  <p class="credit">kids.twreporter</p>
 </div>
+
+<!-- </div> -->
 
 <style>
   .start {
@@ -51,63 +80,225 @@
     position: fixed;
     inset: 0;
     z-index: 30;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     overflow: hidden;
     font-family: 'WDXL Lubrifont TC', system-ui, sans-serif;
     user-select: none;
   }
-  .backdrop {
+  .bg {
     position: absolute;
     inset: 0;
-    z-index: -1;
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(37.5px);
-    -webkit-backdrop-filter: blur(37.5px);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
   }
-  .title {
-    margin: 0;
-    font-weight: 400;
-    font-size: calc(256 * var(--u));
-    line-height: 1;
-    letter-spacing: calc(-7.68 * var(--u));
-    color: rgba(0, 102, 255, 0.6);
-    white-space: nowrap;
-  }
-  .subtitle-row {
+  .fullscreen-button {
+    position: absolute;
+    top: calc(118 * var(--u));
+    right: calc(100 * var(--u));
+    z-index: 1;
     display: flex;
     align-items: center;
-    gap: calc(20 * var(--u));
-    margin-top: calc(40 * var(--u));
+    justify-content: center;
+    width: calc(50 * var(--u));
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    opacity: 0.5;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
   }
-  .subtitle {
+  .fullscreen-button img {
+    width: 100%;
+    height: 100%;
+  }
+  .fullscreen-button:hover {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+    opacity: 1;
+  }
+  .logotype {
+    position: absolute;
+    left: calc(100 * var(--u));
+    top: calc(118 * var(--u));
+    width: calc(549 * var(--u));
+    height: auto;
+    filter: drop-shadow(
+      0 calc(3 * var(--u)) calc(6 * var(--u)) rgba(0, 0, 0, 0.25)
+    );
+  }
+  .menu {
+    position: absolute;
+    left: calc(100 * var(--u));
+    bottom: calc(365 * var(--u));
+    display: flex;
+    flex-direction: column;
+    gap: calc(15 * var(--u));
+    align-items: flex-start;
+  }
+  .menu-item span {
+    white-space: nowrap;
+  }
+  .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    gap: calc(5 * var(--u));
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
     font-size: calc(64 * var(--u));
-    letter-spacing: calc(-1.92 * var(--u));
-    color: rgba(0, 102, 255, 0.7);
-    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.75);
+    text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.25);
+    transition: color 0.15s ease;
   }
-  .stripes {
-    display: flex;
-    flex-direction: column;
-    gap: calc(8 * var(--u));
+  .menu-item .cursor {
+    width: 0;
+    height: calc(28 * var(--u));
+    margin-right: 0;
+    opacity: 0;
+    transition:
+      width 0.15s ease,
+      margin-right 0.15s ease,
+      opacity 0.15s ease;
   }
-  .stripes span {
-    height: calc(15 * var(--u));
-    background: linear-gradient(to right, transparent, rgba(0, 102, 255, 0.7));
+  .menu-item .cursor.right {
+    display: none;
   }
-  .stripes.left {
-    align-items: flex-end;
+  .menu-item:hover,
+  .menu-item:focus-visible {
+    color: #fff;
+    outline: none;
   }
-  .stripes.right span {
-    background: linear-gradient(to left, transparent, rgba(0, 102, 255, 0.7));
+  .menu-item:hover .cursor,
+  .menu-item:focus-visible .cursor {
+    width: calc(26 * var(--u));
+    margin-right: calc(5 * var(--u));
+    opacity: 1;
   }
-  .actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: calc(22 * var(--u));
-    margin-top: calc(60 * var(--u));
+  .settings {
+    position: absolute;
+    left: calc(100 * var(--u));
+    bottom: calc(190 * var(--u));
+    font-size: calc(48 * var(--u));
+    color: rgba(255, 255, 255, 0.5);
+    text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.25);
+  }
+  .divider {
+    position: absolute;
+    left: calc(100 * var(--u));
+    bottom: calc(165 * var(--u));
+    width: calc(418 * var(--u));
+    height: calc(3 * var(--u));
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0)
+    );
+  }
+  .description {
+    position: absolute;
+    left: calc(100 * var(--u));
+    bottom: calc(108 * var(--u));
+    height: calc(32 * var(--u));
+    width: auto;
+  }
+  .credit {
+    position: absolute;
+    right: calc(100 * var(--u));
+    bottom: calc(108 * var(--u));
+    margin: 0;
+    font-family: 'Bitcount Grid Single', monospace;
+    font-weight: 200;
+    font-size: calc(20 * var(--u));
+    letter-spacing: calc(-0.6 * var(--u));
+    color: #fff;
+  }
+
+  /* Mobile: centered portrait layout (1080 x 1920 design frame) */
+  @media (orientation: portrait) {
+    .start {
+      --u: min(0.092592593vw, 0.052083333vh);
+    }
+    .stage {
+      width: calc(1080 * var(--u));
+      height: calc(1920 * var(--u));
+    }
+    .fullscreen-button {
+      display: none;
+    }
+    .logotype {
+      left: 50%;
+      top: calc(160 * var(--u));
+      transform: translateX(-50%);
+      width: calc(795 * var(--u));
+    }
+    .menu {
+      left: 50%;
+      top: auto;
+      bottom: calc(407 * var(--u));
+      transform: translateX(-50%);
+      align-items: center;
+      gap: calc(35 * var(--u));
+    }
+    .menu-item {
+      gap: calc(20 * var(--u));
+      justify-content: center;
+      font-size: calc(128 * var(--u));
+    }
+    .menu-item .cursor {
+      width: calc(52 * var(--u));
+      height: calc(56 * var(--u));
+      margin-right: 0;
+    }
+    .menu-item .cursor.right {
+      display: block;
+      transform: scaleX(-1);
+    }
+    .menu-item:hover .cursor,
+    .menu-item:focus-visible .cursor,
+    .menu-item:active .cursor {
+      width: calc(52 * var(--u));
+      margin-right: 0;
+      opacity: 1;
+    }
+    .settings {
+      left: 50%;
+      top: auto;
+      bottom: calc(270 * var(--u));
+      transform: translateX(-50%);
+      font-size: calc(64 * var(--u));
+      text-align: center;
+    }
+    .divider {
+      left: 50%;
+      top: auto;
+      bottom: calc(229 * var(--u));
+      transform: translateX(-50%);
+      width: calc(626 * var(--u));
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0),
+        rgba(255, 255, 255, 0.5),
+        rgba(255, 255, 255, 0)
+      );
+    }
+    .description {
+      left: 50%;
+      top: auto;
+      bottom: calc(155 * var(--u));
+      transform: translateX(-50%);
+      height: calc(48 * var(--u));
+    }
+    .credit {
+      left: 50%;
+      right: auto;
+      top: auto;
+      bottom: calc(98 * var(--u));
+      transform: translateX(-50%);
+      font-size: calc(32 * var(--u));
+      letter-spacing: calc(-0.96 * var(--u));
+    }
   }
 </style>
