@@ -3,10 +3,7 @@
 
   export const GOAL_RING_R = 0.44
   export const GOAL_TUBE_R = 0.16
-  export const GOALS = [
-    new Vector3(0, 3.32, -6.5),
-    new Vector3(0, 3.32, 6.5),
-  ]
+  export const GOALS = [new Vector3(0, 3.32, -6.5), new Vector3(0, 3.32, 6.5)]
 </script>
 
 <script>
@@ -40,10 +37,15 @@
   const getGlowIntensity = () => {
     const elapsed = GOAL_GLOW_DURATION - goalGlowTimer
     if (elapsed < GOAL_GLOW_EASE_DURATION) {
-      return easeInOut(elapsed / GOAL_GLOW_EASE_DURATION) * GOAL_GLOW_PEAK_INTENSITY
+      return (
+        easeInOut(elapsed / GOAL_GLOW_EASE_DURATION) * GOAL_GLOW_PEAK_INTENSITY
+      )
     }
     if (goalGlowTimer < GOAL_GLOW_EASE_DURATION) {
-      return easeInOut(goalGlowTimer / GOAL_GLOW_EASE_DURATION) * GOAL_GLOW_PEAK_INTENSITY
+      return (
+        easeInOut(goalGlowTimer / GOAL_GLOW_EASE_DURATION) *
+        GOAL_GLOW_PEAK_INTENSITY
+      )
     }
     return GOAL_GLOW_PEAK_INTENSITY
   }
@@ -70,8 +72,16 @@
           material.emissiveIntensity = 0
           goalMaterials.push(material)
         }
-        for (const t of [material.map, material.emissiveMap, material.normalMap, material.roughnessMap]) {
-          if (t) { t.anisotropy = max; t.needsUpdate = true }
+        for (const t of [
+          material.map,
+          material.emissiveMap,
+          material.normalMap,
+          material.roughnessMap,
+        ]) {
+          if (t) {
+            t.anisotropy = max
+            t.needsUpdate = true
+          }
         }
         material.needsUpdate = true
         return material

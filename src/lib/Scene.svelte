@@ -11,7 +11,8 @@
   import hdriFullUrl from '../assets/hdri-full.exr?url'
   import hdriCompressUrl from '../assets/hdri-compress_1K.jpg?url'
 
-  const isTouchDevice = typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0
+  const isTouchDevice =
+    typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0
   const maxDpr = isTouchDevice ? 1.25 : 2
   const shadowMapSize = isTouchDevice ? 1024 : 2048
 

@@ -6,10 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "node scripts/build-fonts.mjs && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier --write \"src/**/*.{svelte,js,ts}\""
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
+    "prettier": "^3.8.4",
+    "prettier-plugin-svelte": "^4.1.1",
     "subset-font": "^2.5.0",
     "svelte": "^5.55.5",
     "vite": "^8.0.12"

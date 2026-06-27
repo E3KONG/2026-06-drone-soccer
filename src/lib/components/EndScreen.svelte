@@ -11,8 +11,7 @@
   <div class="final-score">{score.value}</div>
 
   <p class="congrats">
-    恭喜你，射進 {score.value} 球！歡迎將畫面截圖，到報導者的 FB 或 IG
-    貼文底下留言，和大家分享你的成績，有機會抽精美好禮喔！
+    恭喜你，射進 {score.value} 球！歡迎將畫面截圖，到報導者的 FB 或 IG 貼文底下留言，和大家分享你的成績，有機會抽精美好禮喔！
   </p>
 
   <div class="actions">
@@ -32,7 +31,7 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    font-family: "Swei Marker Sans", system-ui, sans-serif;
+    font-family: 'Swei Marker Sans', system-ui, sans-serif;
     user-select: none;
   }
   .backdrop {
@@ -44,7 +43,7 @@
     -webkit-backdrop-filter: blur(37.5px);
   }
   .final-score {
-    font-family: "WDXL Lubrifont TC", system-ui, monospace;
+    font-family: 'WDXL Lubrifont TC', system-ui, monospace;
     font-size: calc(360 * var(--u));
     line-height: 0.9;
     color: #06f;

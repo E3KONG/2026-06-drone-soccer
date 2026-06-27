@@ -23,17 +23,25 @@
 
   <div class="subtitle-row">
     <div class="stripes left">
-      {#each [420, 400, 380] as w}<span style={`width:calc(${w} * var(--u))`}></span>{/each}
+      {#each [420, 400, 380] as w}<span style={`width:calc(${w} * var(--u))`}
+        ></span>{/each}
     </div>
     <p class="subtitle">挑戰無人機足球射門</p>
     <div class="stripes right">
-      {#each [420, 400, 380] as w}<span style={`width:calc(${w} * var(--u))`}></span>{/each}
+      {#each [420, 400, 380] as w}<span style={`width:calc(${w} * var(--u))`}
+        ></span>{/each}
     </div>
   </div>
 
   <div class="actions">
-    <button class="game-button" type="button" onclick={() => start('match')}>3分鐘挑戰</button>
-    <button class="game-button secondary" type="button" onclick={() => start('practice')}>讓我先練習</button>
+    <button class="game-button" type="button" onclick={() => start('match')}
+      >3分鐘挑戰</button
+    >
+    <button
+      class="game-button secondary"
+      type="button"
+      onclick={() => start('practice')}>讓我先練習</button
+    >
   </div>
 </div>
 
@@ -48,7 +56,7 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    font-family: "WDXL Lubrifont TC", system-ui, sans-serif;
+    font-family: 'WDXL Lubrifont TC', system-ui, sans-serif;
     user-select: none;
   }
   .backdrop {

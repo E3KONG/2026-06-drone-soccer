@@ -1,62 +1,62 @@
 <script>
-  import nipplejs from "nipplejs";
-  import { input } from "../state/input.svelte.ts";
+  import nipplejs from 'nipplejs'
+  import { input } from '../state/input.svelte.ts'
 
-  const isTouch = matchMedia("(pointer: coarse)").matches;
-  const JOYSTICK_COLOR = "#d9d9d9";
+  const isTouch = matchMedia('(pointer: coarse)').matches
+  const JOYSTICK_COLOR = '#d9d9d9'
 
-  let leftZone = $state();
-  let rightZone = $state();
-  let leftActive = $state(false);
-  let rightActive = $state(false);
+  let leftZone = $state()
+  let rightZone = $state()
+  let leftActive = $state(false)
+  let rightActive = $state(false)
 
   $effect(() => {
-    if (!leftZone || !rightZone) return;
+    if (!leftZone || !rightZone) return
 
     const common = {
-      mode: "static",
+      mode: 'static',
       size: 80, // travel radius = size/2 = 40px. Knob + base sized independently in CSS.
-      position: { left: "50%", top: "50%" },
+      position: { left: '50%', top: '50%' },
       restOpacity: 1,
-    };
+    }
 
     const left = nipplejs.create({
       ...common,
       zone: leftZone,
       color: JOYSTICK_COLOR,
-    });
+    })
     const right = nipplejs.create({
       ...common,
       zone: rightZone,
       color: JOYSTICK_COLOR,
-    });
+    })
 
-    left.on("move", (evt) => {
-      input.yaw = -evt.data.vector.x;
-      input.throttle = evt.data.vector.y;
-    });
-    left.on("start", () => (leftActive = true));
-    left.on("end", () => {
-      leftActive = false;
-      input.yaw = 0;
-      input.throttle = 0;
-    });
-    right.on("move", (evt) => {
-      input.roll = evt.data.vector.x;
-      input.pitch = -evt.data.vector.y;
-    });
-    right.on("start", () => (rightActive = true));
-    right.on("end", () => {
-      rightActive = false;
-      input.roll = 0;
-      input.pitch = 0;
-    });
+    left.on('move', (evt) => {
+      input.yaw = -evt.data.vector.x
+      input.throttle = evt.data.vector.y
+    })
+    left.on('start', () => (leftActive = true))
+    left.on('end', () => {
+      leftActive = false
+      input.yaw = 0
+      input.throttle = 0
+    })
+    right.on('move', (evt) => {
+      input.roll = evt.data.vector.x
+      input.pitch = -evt.data.vector.y
+    })
+    right.on('start', () => (rightActive = true))
+    right.on('end', () => {
+      rightActive = false
+      input.roll = 0
+      input.pitch = 0
+    })
 
     return () => {
-      left.destroy();
-      right.destroy();
-    };
-  });
+      left.destroy()
+      right.destroy()
+    }
+  })
 </script>
 
 {#if isTouch}
@@ -92,7 +92,11 @@
     height: 140px !important;
     margin-left: -70px !important;
     margin-top: -70px !important;
-    background: radial-gradient(at 75% 75%, #f2f2f2 0%, #bababa 100%) !important;
+    background: radial-gradient(
+      at 75% 75%,
+      #f2f2f2 0%,
+      #bababa 100%
+    ) !important;
     box-shadow:
       0 -3px 3px rgba(255, 255, 255, 0.5),
       0 3px 3px rgba(255, 255, 255, 0.1),
@@ -101,7 +105,7 @@
   }
   /* Recessed ball cavity (.joystick__ball) */
   .zone :global(.back)::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 50%;
     left: 50%;
@@ -124,7 +128,11 @@
     height: 70px !important;
     margin-left: -35px !important;
     margin-top: -35px !important;
-    background: radial-gradient(at 50% 75%, #f2f2f2 0%, #d9d9d9 100%) !important;
+    background: radial-gradient(
+      at 50% 75%,
+      #f2f2f2 0%,
+      #d9d9d9 100%
+    ) !important;
     box-shadow:
       inset 3px 3px 6px rgba(255, 255, 255, 0.3),
       inset -3px -3px 6px rgba(0, 0, 0, 0.15),
@@ -135,7 +143,7 @@
   }
   /* Specular highlight dots (.joystick__stick:before) */
   .zone :global(.front)::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 6px;
     left: 29px;
@@ -155,7 +163,7 @@
   }
   /* Soft directional shadow (.joystick__stick:after) */
   .zone :global(.front)::after {
-    content: "";
+    content: '';
     position: absolute;
     top: 50%;
     left: 50%;

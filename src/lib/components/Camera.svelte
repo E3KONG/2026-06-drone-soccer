@@ -22,8 +22,8 @@
   let lastPointerX = 0
   let lastPointerY = 0
 
-  const targetPos  = new Vector3()
-  const offset     = new Vector3()
+  const targetPos = new Vector3()
+  const offset = new Vector3()
 
   const resetCamera = () => {
     orbitYawOffset = 0

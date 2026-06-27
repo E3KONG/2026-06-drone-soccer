@@ -14,7 +14,10 @@
   import iconPauseUrl from '../../assets/hud/Icon-pause.svg?url'
   import iconReplayUrl from '../../assets/hud/Icon-replay.svg?url'
 
-  const staticUiSvg = staticUiRaw.replaceAll('fill="white"', 'fill="currentColor"')
+  const staticUiSvg = staticUiRaw.replaceAll(
+    'fill="white"',
+    'fill="currentColor"',
+  )
 
   let isFullscreen = $state(false)
   let showGoalFlash = $state(false)
@@ -127,7 +130,13 @@
   })
 
   $effect(() => {
-    if (game.mode !== 'match' || game.paused || game.over || (game.countdown ?? 0) > 0) return
+    if (
+      game.mode !== 'match' ||
+      game.paused ||
+      game.over ||
+      (game.countdown ?? 0) > 0
+    )
+      return
     const id = setInterval(() => {
       if (game.timeLeft > 0) {
         game.timeLeft -= 1
@@ -174,7 +183,13 @@
   onwebkitfullscreenchange={syncFullscreenState}
 />
 
-<div class="static-ui" class:warn={showWarning} class:scored={showGoalFlash} class:dimmed aria-hidden="true">
+<div
+  class="static-ui"
+  class:warn={showWarning}
+  class:scored={showGoalFlash}
+  class:dimmed
+  aria-hidden="true"
+>
   <div class="static-symbols">{@html staticUiSvg}</div>
 
   <svg class="static-corner top left" viewBox="0 0 857 380">
@@ -235,23 +250,43 @@
   {/key}
 {/if}
 
-<div class="flash-idle" class:scored={showGoalFlash} class:warn={showWarning} aria-hidden="true">
+<div
+  class="flash-idle"
+  class:scored={showGoalFlash}
+  class:warn={showWarning}
+  aria-hidden="true"
+>
   <div class="flash-corner top left">{@html flashSvg}</div>
   <div class="flash-corner top right mirror-x">{@html flashSvg}</div>
   <div class="flash-corner bottom left mirror-y">{@html flashSvg}</div>
   <div class="flash-corner bottom right mirror-xy">{@html flashSvg}</div>
 </div>
 
-<button class="pause-label" type="button" aria-label="暫停" onclick={togglePause}>
+<button
+  class="pause-label"
+  type="button"
+  aria-label="暫停"
+  onclick={togglePause}
+>
   <span>暫</span>
   <span>停</span>
 </button>
 
-<button class="icon-button pause" type="button" aria-label="暫停" onclick={togglePause}>
+<button
+  class="icon-button pause"
+  type="button"
+  aria-label="暫停"
+  onclick={togglePause}
+>
   <img src={iconPauseUrl} alt="" />
 </button>
 
-<button class="icon-button restart" type="button" aria-label="重新開始" onclick={restartGame}>
+<button
+  class="icon-button restart"
+  type="button"
+  aria-label="重新開始"
+  onclick={restartGame}
+>
   <img src={iconReplayUrl} alt="" />
 </button>
 
@@ -264,7 +299,13 @@
 {/if}
 
 {#if game.mode === 'match'}
-  <div class="timer" class:low={game.timeLeft <= 30} aria-label="Time remaining">{formatTime(game.timeLeft)}</div>
+  <div
+    class="timer"
+    class:low={game.timeLeft <= 30}
+    aria-label="Time remaining"
+  >
+    {formatTime(game.timeLeft)}
+  </div>
 {/if}
 
 {#if showWarning}
@@ -324,7 +365,10 @@
   <div class="key-cluster arrows">
     <div class="key-row top">
       <span class="key arrow-key" class:active={pressedKeys.ArrowUp}>
-        <span class="key-frame" style={`--rotation:${arrowKeys[0][1]+180}deg`}>
+        <span
+          class="key-frame"
+          style={`--rotation:${arrowKeys[0][1] + 180}deg`}
+        >
           {@html buttonCorneredSvg}
         </span>
         <img
@@ -338,7 +382,7 @@
     <div class="key-row">
       {#each arrowKeys.slice(1) as [key, rotation]}
         <span class="key arrow-key" class:active={pressedKeys[key]}>
-          <span class="key-frame" style={`--rotation:${rotation+180}deg`}>
+          <span class="key-frame" style={`--rotation:${rotation + 180}deg`}>
             {@html buttonCorneredSvg}
           </span>
           <img
@@ -362,7 +406,7 @@
   .controls-hud {
     position: fixed;
     display: flex;
-    font-family: "WDXL Lubrifont TC", system-ui, sans-serif;
+    font-family: 'WDXL Lubrifont TC', system-ui, sans-serif;
     user-select: none;
     z-index: 20;
   }
@@ -377,7 +421,10 @@
     --flash-gap-x: calc(7.5 * var(--hud-u));
     --flash-gap-y: calc(74 * var(--hud-u));
     --extend-overlap: 1px;
-    --extend-w: max(0px, calc(50vw - var(--edge-x) - var(--corner-w) + var(--extend-overlap)));
+    --extend-w: max(
+      0px,
+      calc(50vw - var(--edge-x) - var(--corner-w) + var(--extend-overlap))
+    );
     inset: 0;
     display: block;
     pointer-events: none;
@@ -466,11 +513,11 @@
     z-index: 16;
     pointer-events: none;
     color: var(--color-yellow-400);
-    font-family: "Bitcount Grid Single", system-ui, monospace;
+    font-family: 'Bitcount Grid Single', system-ui, monospace;
     font-size: clamp(140px, 80vw, 700px);
     line-height: 1;
-    text-shadow: 
-    0 0 10px var(--color-gray-500) inset,
+    text-shadow:
+      0 0 10px var(--color-gray-500) inset,
       0 0 30px var(--color-yellow-400);
     mix-blend-mode: screen;
     animation: score-flash-pop 1.5s ease-out both;
@@ -484,11 +531,13 @@
     pointer-events: none;
     color: #0066ff40;
     -webkit-text-stroke-width: 2px;
-    -webkit-text-stroke-color: #06F;
-    font-family: "WDXL Lubrifont TC", system-ui, sans-serif;
+    -webkit-text-stroke-color: #06f;
+    font-family: 'WDXL Lubrifont TC', system-ui, sans-serif;
     font-size: clamp(160px, 40vw, 520px);
     line-height: 1;
-    text-shadow: 0 0 30px var(--color-blue-400), 0 0 60px #0066ff40;
+    text-shadow:
+      0 0 30px var(--color-blue-400),
+      0 0 60px #0066ff40;
     animation: countdown-pop 1s ease-out both;
   }
   @keyframes countdown-pop {
@@ -509,13 +558,13 @@
       transform: translate(-50%, -50%) scale(0.85);
     }
   }
-  .flash-idle :global([id^="Flash-trapezoid"] path) {
+  .flash-idle :global([id^='Flash-trapezoid'] path) {
     opacity: 0;
   }
-  .flash-idle :global([id^="Flash-parallelogram"] path) {
+  .flash-idle :global([id^='Flash-parallelogram'] path) {
     opacity: 0;
   }
-  .flash-idle.scored :global([id^="Flash-parallelogram"] path) {
+  .flash-idle.scored :global([id^='Flash-parallelogram'] path) {
     animation-name: flash-pop;
     animation-duration: 1.2s;
     animation-timing-function: ease-in-out;
@@ -532,9 +581,9 @@
     fill: var(--color-red-400);
     transition: fill 0s;
   }
-  .flash-idle :global([id^="Flash-line"] path),
-  .flash-idle :global([id^="Flash-square"] path),
-  .flash-idle :global([id^="Flash-circle"] path) {
+  .flash-idle :global([id^='Flash-line'] path),
+  .flash-idle :global([id^='Flash-square'] path),
+  .flash-idle :global([id^='Flash-circle'] path) {
     animation: flash-fade 1.5s ease-in-out infinite;
   }
   .flash-idle :global(g path:nth-child(1)) {
@@ -639,7 +688,7 @@
     border: 0;
     background: transparent;
     color: rgba(255, 255, 255, 0.94);
-    font-family: "WDXL Lubrifont TC", system-ui, sans-serif;
+    font-family: 'WDXL Lubrifont TC', system-ui, sans-serif;
     font-size: clamp(34px, 3.35vw, 64px);
     line-height: 1.05;
     opacity: 0.5;
@@ -697,7 +746,7 @@
     pointer-events: none;
     white-space: nowrap;
     color: var(--color-red-400);
-    font-family: "WDXL Lubrifont TC", system-ui, sans-serif;
+    font-family: 'WDXL Lubrifont TC', system-ui, sans-serif;
     font-size: clamp(14px, 1.5vw, 26px);
     text-shadow: 0 0 10px var(--color-red-400);
   }
@@ -755,7 +804,7 @@
     height: 100%;
   }
   .fullscreen-button:hover,
-  .fullscreen-button[aria-pressed="true"] {
+  .fullscreen-button[aria-pressed='true'] {
     filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
     opacity: 1;
   }
@@ -828,11 +877,11 @@
     width: 100%;
     height: 100%;
   }
-  .key-frame :global([id^="button-flash"]) {
+  .key-frame :global([id^='button-flash']) {
     opacity: 0;
     transition: opacity 0.15s ease-out;
   }
-  .key.active .key-frame :global([id^="button-flash"]) {
+  .key.active .key-frame :global([id^='button-flash']) {
     opacity: 1;
   }
   .arrow-icon {
@@ -867,10 +916,10 @@
     color: var(--color-red-400);
     text-shadow: none;
   }
-  .restart-key.active .key-frame :global([id^="button-frame"]) {
+  .restart-key.active .key-frame :global([id^='button-frame']) {
     stroke: var(--color-red-400);
   }
-  .restart-key.active .key-frame :global([id^="button-flash"]) {
+  .restart-key.active .key-frame :global([id^='button-flash']) {
     fill: none;
   }
   @keyframes key-fill {
@@ -902,7 +951,10 @@
     .static-ui,
     .flash-idle {
       --hud-u: min(0.092592593vw, 0.052083333vh);
-      --extend-w: max(0px, calc(50vh - var(--edge-x) - var(--corner-w) + var(--extend-overlap)));
+      --extend-w: max(
+        0px,
+        calc(50vh - var(--edge-x) - var(--corner-w) + var(--extend-overlap))
+      );
       inset: auto;
       top: 50%;
       left: 50%;
@@ -940,8 +992,14 @@
     }
   }
   @keyframes triangle-blink {
-    0%, 80%, 100% { opacity: 0; }
-    90% { opacity: 1; }
+    0%,
+    80%,
+    100% {
+      opacity: 0;
+    }
+    90% {
+      opacity: 1;
+    }
   }
   @keyframes score-flash-pop {
     0% {

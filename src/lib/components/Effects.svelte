@@ -8,11 +8,17 @@
 
   let { strength = 0.9, radius = 0.4, threshold = 2.0 } = $props()
 
-  const { renderer, scene, camera, size, dpr, autoRender, renderStage } = useThrelte()
+  const { renderer, scene, camera, size, dpr, autoRender, renderStage } =
+    useThrelte()
 
   const composer = new EffectComposer(renderer)
   const renderPass = new RenderPass(scene, camera.current)
-  const bloomPass = new UnrealBloomPass(new Vector2(1, 1), strength, radius, threshold)
+  const bloomPass = new UnrealBloomPass(
+    new Vector2(1, 1),
+    strength,
+    radius,
+    threshold,
+  )
   composer.addPass(renderPass)
   composer.addPass(bloomPass)
   composer.addPass(new OutputPass())
@@ -38,5 +44,8 @@
     return () => autoRender.set(true)
   })
 
-  useTask((delta) => composer.render(delta), { stage: renderStage, autoInvalidate: false })
+  useTask((delta) => composer.render(delta), {
+    stage: renderStage,
+    autoInvalidate: false,
+  })
 </script>

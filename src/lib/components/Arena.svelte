@@ -11,14 +11,21 @@
     if (!g) return
     const max = renderer.capabilities.getMaxAnisotropy()
     g.scene.traverse((o) => {
-      const mats = Array.isArray(o.material) ? o.material : o.material ? [o.material] : []
+      const mats = Array.isArray(o.material)
+        ? o.material
+        : o.material
+          ? [o.material]
+          : []
       if (!mats.length) return
       // Only the metal structure casts; the alpha net would cast a solid blob + phantom faces.
       o.castShadow = mats.some((m) => m.name === 'Metal')
       o.receiveShadow = true
       for (const m of mats) {
         for (const t of [m.map, m.emissiveMap, m.normalMap, m.roughnessMap]) {
-          if (t) { t.anisotropy = max; t.needsUpdate = true }
+          if (t) {
+            t.anisotropy = max
+            t.needsUpdate = true
+          }
         }
       }
     })

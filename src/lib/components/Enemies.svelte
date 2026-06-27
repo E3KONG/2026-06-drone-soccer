@@ -3,7 +3,11 @@
   import { useGltf } from '@threlte/extras'
   import { Vector3, Euler, MathUtils } from 'three'
   import droneUrl from '../../assets/drone-soccer.glb?url'
-  import { enemies, ENEMY_RADIUS, originalShell } from '../state/enemyState.svelte.ts'
+  import {
+    enemies,
+    ENEMY_RADIUS,
+    originalShell,
+  } from '../state/enemyState.svelte.ts'
   import { dronePos } from '../state/droneState.svelte.ts'
   import { game } from '../state/game.svelte.ts'
   import { GOALS, GOAL_RING_R, GOAL_TUBE_R } from './Goal.svelte'
@@ -36,9 +40,16 @@
   const rand = (a, b) => MathUtils.randFloat(a, b)
   // 每台敵機獨立的三軸擺動參數，讓繞圈不是平面圓而是 3D 亂飄
   const seedWobble = (a) => {
-    a.fx = rand(0.6, 1.4); a.fy = rand(0.5, 1.1); a.fz = rand(0.6, 1.4); a.fr = rand(0.3, 0.7)
-    a.px = rand(0, Math.PI * 2); a.py = rand(0, Math.PI * 2); a.pz = rand(0, Math.PI * 2)
-    a.ax = rand(0.4, 0.9); a.ay = rand(0.5, 1.0); a.az = rand(0.4, 0.9)
+    a.fx = rand(0.6, 1.4)
+    a.fy = rand(0.5, 1.1)
+    a.fz = rand(0.6, 1.4)
+    a.fr = rand(0.3, 0.7)
+    a.px = rand(0, Math.PI * 2)
+    a.py = rand(0, Math.PI * 2)
+    a.pz = rand(0, Math.PI * 2)
+    a.ax = rand(0.4, 0.9)
+    a.ay = rand(0.5, 1.0)
+    a.az = rand(0.4, 0.9)
   }
 
   const randomTarget = () =>
@@ -124,7 +135,11 @@
     game.started // 開賽(或重來)時重新從地面起飛
     agents.forEach((a, i) => {
       const t = agents.length > 1 ? i / (agents.length - 1) : 0.5
-      a.pos.set(MathUtils.lerp(-0.6, 0.6, t), GROUND_Y, MathUtils.lerp(REGION_MIN.z, REGION_MAX.z, t))
+      a.pos.set(
+        MathUtils.lerp(-0.6, 0.6, t),
+        GROUND_Y,
+        MathUtils.lerp(REGION_MIN.z, REGION_MAX.z, t),
+      )
       a.vel.set(0, 0, 0)
       a.target = randomTarget()
       a.yaw = a.pitch = a.roll = 0
@@ -151,7 +166,8 @@
 
   useTask((delta) => {
     const dt = Math.min(delta, 0.05) // 卡頓時鉗住，避免瞬移
-    const active = game.started && !game.paused && !game.over && (game.countdown ?? 0) === 0
+    const active =
+      game.started && !game.paused && !game.over && (game.countdown ?? 0) === 0
 
     if (active) {
       clock += dt
@@ -180,9 +196,27 @@
           a.orbitAngle += HARASS_ORBIT_SPEED * dt
           const r = HARASS_ORBIT_R + Math.sin(clock * a.fr) * 0.2
           a.target.set(
-            MathUtils.clamp(dronePos.x + Math.cos(a.orbitAngle) * r + Math.sin(clock * a.fx + a.px) * a.ax * HARASS_WOBBLE, -3, 3),
-            MathUtils.clamp(dronePos.y + ORBIT_Y + Math.sin(clock * a.fy + a.py) * a.ay * HARASS_WOBBLE, 0.8, 4.2),
-            MathUtils.clamp(dronePos.z + Math.sin(a.orbitAngle) * r + Math.sin(clock * a.fz + a.pz) * a.az * HARASS_WOBBLE, -7, 7),
+            MathUtils.clamp(
+              dronePos.x +
+                Math.cos(a.orbitAngle) * r +
+                Math.sin(clock * a.fx + a.px) * a.ax * HARASS_WOBBLE,
+              -3,
+              3,
+            ),
+            MathUtils.clamp(
+              dronePos.y +
+                ORBIT_Y +
+                Math.sin(clock * a.fy + a.py) * a.ay * HARASS_WOBBLE,
+              0.8,
+              4.2,
+            ),
+            MathUtils.clamp(
+              dronePos.z +
+                Math.sin(a.orbitAngle) * r +
+                Math.sin(clock * a.fz + a.pz) * a.az * HARASS_WOBBLE,
+              -7,
+              7,
+            ),
           )
           desired.subVectors(a.target, a.pos)
         } else {
@@ -210,10 +244,15 @@
           const dr = planar - GOAL_RING_R
           const d = Math.hypot(dr, gToE.z)
           if (d < surf && planar > 1e-4 && d > 1e-6) {
-            gNormal.set((gToE.x / planar) * (dr / d), (gToE.y / planar) * (dr / d), gToE.z / d)
+            gNormal.set(
+              (gToE.x / planar) * (dr / d),
+              (gToE.y / planar) * (dr / d),
+              gToE.z / d,
+            )
             a.pos.addScaledVector(gNormal, surf - d)
             const vn = a.vel.dot(gNormal)
-            if (vn < 0) a.vel.addScaledVector(gNormal, -(1 + ENEMY_RESTITUTION) * vn)
+            if (vn < 0)
+              a.vel.addScaledVector(gNormal, -(1 + ENEMY_RESTITUTION) * vn)
           }
 
           // 開口也不可穿越：敵機不得進門，擋回原本那側
@@ -233,8 +272,16 @@
           fwd.copy(a.vel).divideScalar(sp)
           a.yaw = dampAngle(a.yaw, Math.atan2(-fwd.x, -fwd.z), YAW_RATE, dt)
           right.set(fwd.z, 0, -fwd.x)
-          tPitch = MathUtils.clamp(-force.dot(fwd) * TILT_K, -MAX_TILT, MAX_TILT)
-          tRoll = MathUtils.clamp(force.dot(right) * TILT_K, -MAX_TILT, MAX_TILT)
+          tPitch = MathUtils.clamp(
+            -force.dot(fwd) * TILT_K,
+            -MAX_TILT,
+            MAX_TILT,
+          )
+          tRoll = MathUtils.clamp(
+            force.dot(right) * TILT_K,
+            -MAX_TILT,
+            MAX_TILT,
+          )
         }
         a.pitch += (tPitch - a.pitch) * Math.min(TILT_RATE * dt, 1)
         a.roll += (tRoll - a.roll) * Math.min(TILT_RATE * dt, 1)

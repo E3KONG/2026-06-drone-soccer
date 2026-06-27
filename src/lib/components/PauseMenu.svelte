@@ -27,7 +27,7 @@
     align-items: center;
     justify-content: center;
     gap: calc(22 * var(--u));
-    font-family: "WDXL Lubrifont TC", system-ui, sans-serif;
+    font-family: 'WDXL Lubrifont TC', system-ui, sans-serif;
     user-select: none;
   }
   .backdrop {
