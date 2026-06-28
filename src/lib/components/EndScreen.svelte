@@ -47,11 +47,13 @@
         ctx.fillRect(0, 0, w, h)
       }
 
-      // 2) Text + logo overlay, captured transparent (bg hidden so it isn't
-      //    routed through the broken foreignObject image path).
-      bgEl.style.visibility = 'hidden'
-      const overlayUrl = await toPng(endEl, { pixelRatio: scale })
-      bgEl.style.visibility = ''
+      // 2) Text + logo overlay, captured transparent. Exclude the bg from the
+      //    clone via `filter` (not by hiding the live node — that flashes) so it
+      //    isn't routed through the broken foreignObject image path.
+      const overlayUrl = await toPng(endEl, {
+        pixelRatio: scale,
+        filter: (node) => node !== bgEl,
+      })
       const overlay = new Image()
       overlay.src = overlayUrl
       await overlay.decode()
