@@ -91,6 +91,40 @@ body {
   opacity: 1;
 }
 
+.menu-item.toggle {
+  opacity: 0.5;
+  padding: var(--fs-xs);
+  border-radius: calc(20 * var(--u));
+  border: 1px solid #ffffff80;
+  background-color: #eee;
+  color: #aaaaaa;
+  /* engraved/inset text: light highlight below the glyphs (no real inset for
+     text-shadow; this fakes it) */
+  text-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 -1px 1px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    -1px -4px 6px rgba(0, 0, 0, 0.2) inset,
+    4px 4px 8px rgba(255, 255, 255, 0.7) inset;
+}
+.menu-item.toggle.on {
+  opacity: 1;
+  background-color: #eee;
+  color: #808080;
+  text-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 -1px 1px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    1px 4px 6px rgba(0, 0, 0, 0.2) inset,
+    -4px -4px 8px rgba(255, 255, 255, 0.7) inset;
+}
+.menu-item.toggle .cursor {
+  display: none;
+}
+.menu-item.toggle .cursor.right {
+  display: none;
+}
+
 @media (orientation: portrait) {
   .menu-item {
     gap: calc(20 * var(--u));

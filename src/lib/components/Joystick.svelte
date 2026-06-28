@@ -1,6 +1,7 @@
 <script>
   import nipplejs from 'nipplejs'
   import { input } from '../state/input.svelte.ts'
+  import { game } from '../state/game.svelte.ts'
 
   const isTouch = matchMedia('(pointer: coarse)').matches
   const JOYSTICK_COLOR = '#d9d9d9'
@@ -15,7 +16,7 @@
 
     const common = {
       mode: 'static',
-      size: 80, // travel radius = size/2 = 40px. Knob + base sized independently in CSS.
+      size: 80,
       position: { left: '50%', top: '50%' },
       restOpacity: 1,
     }
@@ -60,7 +61,10 @@
 </script>
 
 {#if isTouch}
-  <div class="joystick-layer">
+  <div
+    class="joystick-layer"
+    class:guide={game.mode === 'practice' && game.controlGuide}
+  >
     <div class="zone left" class:active={leftActive} bind:this={leftZone}></div>
     <div
       class="zone right"
@@ -79,7 +83,8 @@
   }
   .zone {
     position: absolute;
-    bottom: 0;
+    /* lifted by the knob radius (70px / 2) to sit a touch higher */
+    bottom: 35px;
     width: 48%;
     height: 40%;
     pointer-events: auto;
@@ -180,5 +185,9 @@
   }
   .zone.right {
     right: 0;
+  }
+  /* When the TouchGuide pad is the background, drop the round base ring. */
+  .joystick-layer.guide :global(.back) {
+    display: none !important;
   }
 </style>

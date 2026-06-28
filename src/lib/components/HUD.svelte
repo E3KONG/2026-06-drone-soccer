@@ -4,8 +4,8 @@
   import { game, restartGame } from '../state/game.svelte.ts'
   import PauseMenu from './PauseMenu.svelte'
   import EndScreen from './EndScreen.svelte'
-  import KeyMapUI from './KeyMapUI.svelte'
-  import TouchMapUI from './TouchMapUI.svelte'
+  import KeyGuide from './KeyGuide.svelte'
+  import TouchGuide from './TouchGuide.svelte'
   import staticUiRaw from '../../assets/hud/StaticUI.svg?raw'
   import flashSvg from '../../assets/hud/Flash.svg?raw'
   import flashTriangleUrl from '../../assets/hud/Flash-triangle.svg?url'
@@ -344,8 +344,8 @@
   <img src={iconFullScreenUrl} alt="" />
 </button>
 
-<KeyMapUI {pressedKeys} />
-<TouchMapUI />
+<KeyGuide {pressedKeys} />
+<TouchGuide />
 
 <style>
   .static-ui,
@@ -464,7 +464,7 @@
   .flash-idle :global(path) {
     transition: fill 1.2s ease-out;
   }
-  .score-flash {
+  /* .score-flash {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -480,7 +480,7 @@
     mix-blend-mode: screen;
     animation: score-flash-pop 1.5s ease-out both;
     filter: blur(5px);
-  }
+  } */
   .countdown {
     position: fixed;
     top: 50%;
@@ -744,8 +744,8 @@
     letter-spacing: 0;
     text-align: center;
     text-shadow:
-      0 0 30px #fff,
-      0 0 60px #ffffff40;
+      0 0 var(--fs-md) #fff,
+      0 0 var(--fs-lg) #ffffff40;
     -webkit-text-stroke-width: 2px;
     -webkit-text-stroke-color: #fff;
   }
@@ -808,9 +808,15 @@
     }
     .score-hud {
       bottom: 6.5vh;
+      text-shadow:
+        0 0 var(--fs-sm) #ffffff40,
+        0 0 var(--fs-sm) #ffffff10;
     }
     .flash-triangle.top {
       top: 16vh;
+    }
+    .flash-triangle.bottom {
+      bottom: 20vh;
     }
     .warning-text {
       top: 16vh;

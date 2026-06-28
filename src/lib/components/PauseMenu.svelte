@@ -4,10 +4,14 @@
   import { menuNav } from '../menuNav.js'
   import MenuItem from './MenuItem.svelte'
 
+  const isTouch = matchMedia('(pointer: coarse)').matches
+
   const resume = () => {
     resetInput()
     game.paused = false
   }
+
+  const toggleGuide = () => (game.controlGuide = !game.controlGuide)
 </script>
 
 <div class="pause-menu" use:menuNav>
@@ -15,6 +19,11 @@
   <MenuItem onclick={resume}>繼續</MenuItem>
   <MenuItem onclick={restartGame}>重新開始</MenuItem>
   <MenuItem onclick={toMenu}>返回主選單</MenuItem>
+  {#if isTouch && game.mode === 'practice'}
+    <MenuItem selected={game.controlGuide} onclick={toggleGuide}>
+      控制器指引
+    </MenuItem>
+  {/if}
 </div>
 
 <style>
@@ -31,9 +40,12 @@
     font-family: 'WDXL Lubrifont TC', system-ui, sans-serif;
     user-select: none;
   }
-  .pause-menu :global(.menu-item .cursor.right) {
-    display: block;
-    transform: scaleX(-1);
+  .pause-menu :global(.menu-item.toggle) {
+    position: absolute;
+    bottom: 12vh;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(var(--fs-md) * 0.75);
   }
   .backdrop {
     position: absolute;
@@ -50,10 +62,10 @@
       gap: calc(40 * var(--u));
     }
   }
-  /* On touch, lift the menu up so it clears the joystick tutorial below. */
+
   @media (pointer: coarse) {
     .pause-menu {
-      padding-bottom: 3vh;
+      padding-bottom: 2vh;
     }
   }
 </style>

@@ -6,8 +6,12 @@
 
   const MIN_DISTANCE = 0.5
   const MAX_DISTANCE = 4
-  const DEFAULT_DISTANCE = Math.hypot(1.25, 0.5)
-  const DEFAULT_PITCH = Math.atan2(0.5, 1.25)
+  const isTouch = matchMedia('(pointer: coarse)').matches
+  const REACH = isTouch ? 1.75 : 1.25
+  const LOOK_OFFSET_Y = isTouch ? -0.1 : 0
+  const HEIGHT = 0.5
+  const DEFAULT_DISTANCE = Math.hypot(REACH, HEIGHT)
+  const DEFAULT_PITCH = Math.atan2(HEIGHT, REACH)
   const MIN_PITCH = -0.15
   const MAX_PITCH = 1.2
   const ROTATE_SENSITIVITY = 0.006
@@ -140,7 +144,7 @@
 
     targetPos.set(dronePos.x, dronePos.y, dronePos.z).add(offset)
     camRef.position.lerp(targetPos, 0.2)
-    camRef.lookAt(dronePos.x, dronePos.y, dronePos.z)
+    camRef.lookAt(dronePos.x, dronePos.y + LOOK_OFFSET_Y, dronePos.z)
   })
 </script>
 
