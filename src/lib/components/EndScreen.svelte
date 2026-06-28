@@ -22,8 +22,11 @@
     </p>
   </div>
 
+  <div class="divider"></div>
   <p class="article">
-    【3D圖解】科普無人機足球的飛行祕密──「空中梅西」你來當！
+    【3D圖解】科普無人機足球的飛行祕密<span class="dash">──</span><br
+      class="brk"
+    />「空中梅西」你來當！
   </p>
 
   <div class="actions" use:menuNav>
@@ -73,8 +76,9 @@
     line-height: 0.9;
     text-align: right;
     letter-spacing: calc(-12 * var(--u));
-    color: rgba(255, 255, 255, 0.85);
-    text-shadow: 0 calc(3 * var(--u)) calc(6 * var(--u)) rgba(0, 0, 0, 0.25);
+    color: rgba(255, 255, 255, 1);
+    text-shadow: 0 calc(3 * var(--u)) calc(10 * var(--u))
+      rgba(255, 255, 255, 0.5);
   }
   .congrats {
     width: 0;
@@ -82,23 +86,39 @@
     font-family: 'Swei Marker Sans', system-ui, sans-serif;
     font-weight: 500;
     font-size: calc(var(--fs-sm) * 0.7);
-    line-height: 1.1;
-    letter-spacing: calc(-1.08 * var(--u));
+    line-height: 1.3;
+    letter-spacing: calc(0.5 * var(--u));
     text-align: justify;
     color: #fff;
-    text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.25);
+    text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.2);
+  }
+  .divider {
+    position: absolute;
+    left: calc(61 * var(--u));
+    bottom: calc(145 * var(--u));
+    width: calc(418 * var(--u));
+    height: calc(3 * var(--u));
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0)
+    );
   }
   .article {
     position: absolute;
-    left: calc(61 * var(--u));
+    left: calc(44 * var(--u));
     bottom: calc(85 * var(--u));
     font-family: 'Swei Marker Sans', system-ui, sans-serif;
-    font-weight: 700;
+    font-weight: 500;
     font-size: var(--fs-xs);
-    letter-spacing: calc(-0.96 * var(--u));
+    letter-spacing: calc(2 * var(--u));
+    line-height: 130%;
     white-space: nowrap;
     color: #fff;
     text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.25);
+  }
+  .article .brk {
+    display: none;
   }
   .actions {
     position: absolute;
@@ -113,38 +133,64 @@
     .end {
       --u: min(0.092592593vw, 0.052083333vh);
     }
+    .bg {
+      filter: brightness(0.5);
+      object-position: 65% center;
+    }
     .logo {
       left: 50%;
       transform: translateX(-50%);
-      top: calc(120 * var(--u));
+      top: calc(100 * var(--u));
       width: calc(320 * var(--u));
     }
     .panel {
       left: 50%;
       right: auto;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      width: calc(900 * var(--u));
+      top: calc(200 * var(--u));
+      transform: translateX(-50%);
+      width: 60vw;
       align-items: center;
       text-align: center;
     }
+    .final-score {
+      text-shadow: none;
+    }
     .congrats {
       text-align: center;
+      font-size: calc(var(--fs-sm) * 0.9);
+    }
+    .divider {
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: calc(240 * var(--u));
+      width: calc(626 * var(--u));
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0),
+        rgba(255, 255, 255, 0.5),
+        rgba(255, 255, 255, 0)
+      );
     }
     .article {
       left: 50%;
       transform: translateX(-50%);
-      bottom: calc(360 * var(--u));
+      bottom: calc(100 * var(--u));
       white-space: normal;
-      max-width: calc(900 * var(--u));
+      width: 100vw;
       text-align: center;
+    }
+    .article .brk {
+      display: inline;
+    }
+    .article .dash {
+      display: none;
     }
     .actions {
       left: 50%;
       right: auto;
       transform: translateX(-50%);
-      bottom: calc(160 * var(--u));
-      flex-direction: column;
+      bottom: calc(300 * var(--u));
+      flex-direction: column-reverse;
       gap: calc(30 * var(--u));
     }
   }
