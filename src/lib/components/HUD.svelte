@@ -27,6 +27,12 @@
     gameFinalSound.volume = finalBase * audio.gain
   })
 
+  // iOS ignores volume, so stop SFX outright while muted (the timer resumes
+  // gameFinal when unmuted and still in its window)
+  $effect(() => {
+    if (audio.muted) gameFinalSound.pause()
+  })
+
 
   const staticUiSvg = staticUiRaw.replaceAll(
     'fill="white"',
@@ -124,7 +130,7 @@
   let countingDown = false
   $effect(() => {
     const active = game.countdown !== null
-    if (active && !countingDown) gameStartSound.play()
+    if (active && !countingDown && !audio.muted) gameStartSound.play()
     countingDown = active
   })
 
@@ -161,7 +167,7 @@
         game.timeLeft -= 1
         if (game.timeLeft === 0) game.over = true
         if (game.timeLeft <= 60 && game.timeLeft > 0) {
-          if (gameFinalSound.paused) gameFinalSound.play()
+          if (!audio.muted && gameFinalSound.paused) gameFinalSound.play()
           finalBase = (60 - game.timeLeft) / 60
         }
       }

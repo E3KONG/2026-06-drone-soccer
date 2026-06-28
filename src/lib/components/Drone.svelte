@@ -295,7 +295,13 @@
       0,
       1,
     )
-    if (audioCtx.state === 'suspended') audioCtx.resume()
+    // keep the audio context suspended while muted so it's truly paused, not
+    // just silent at gain 0
+    if (audio.muted) {
+      if (audioCtx.state === 'running') audioCtx.suspend()
+    } else if (audioCtx.state === 'suspended') {
+      audioCtx.resume()
+    }
     thrustVol += (targetVol - thrustVol) * 0.1
     thrustGain.gain.value = thrustVol * THRUST_MAX_GAIN * audio.gain
 

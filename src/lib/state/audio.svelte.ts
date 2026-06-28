@@ -1,8 +1,5 @@
 // `muted` is the toggle intent (drives the icon); `gain` is the animated master
-// volume multiplier every audio source multiplies into. Muting drops fast to 0,
-// unmuting fades slowly back up.
-// `muted` is the toggle intent (drives the icon); `gain` is the animated master
-// volume multiplier every audio source multiplies into.
+// volume multiplier every audio source multiplies into. Starts muted/silent.
 export const audio = $state({ muted: true, gain: 0 })
 
 const FADE_UP = 1.2 // seconds to fade back up

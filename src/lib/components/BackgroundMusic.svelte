@@ -6,28 +6,16 @@
 
   const music = new Audio(loopUrl)
   music.loop = true
-  music.volume = VOLUME
 
-  // master gain (fades on mute/unmute)
+  // volume fade on desktop/Android (iOS ignores volume — handled by pause below)
   $effect(() => {
     music.volume = VOLUME * audio.gain
   })
 
-  // autoplay is blocked until a user gesture, so try now and again on first input
+  // hard play/stop: the reliable silence on iOS, and actually stops audio while
+  // muted. Unmuting is always via a tap/key, so play() runs within a gesture.
   $effect(() => {
-    const play = () => music.play().catch(() => {})
-    play()
-    const onGesture = () => {
-      play()
-      window.removeEventListener('pointerdown', onGesture)
-      window.removeEventListener('keydown', onGesture)
-    }
-    window.addEventListener('pointerdown', onGesture)
-    window.addEventListener('keydown', onGesture)
-    return () => {
-      music.pause()
-      window.removeEventListener('pointerdown', onGesture)
-      window.removeEventListener('keydown', onGesture)
-    }
+    if (audio.muted) music.pause()
+    else music.play().catch(() => {})
   })
 </script>
