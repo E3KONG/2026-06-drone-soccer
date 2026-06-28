@@ -8,13 +8,18 @@
   import BackgroundMusic from './lib/components/BackgroundMusic.svelte'
   import { game } from './lib/state/game.svelte.ts'
   import { toggleFullscreen } from './lib/fullscreen.js'
+  import { toggleMute } from './lib/state/audio.svelte.ts'
 
-  // Global fullscreen bindings: Ctrl+F and gamepad button 8.
+  // Global key bindings: Ctrl+F fullscreen, M mute; gamepad button 8 fullscreen.
   $effect(() => {
     const onKey = (e) => {
-      if (e.ctrlKey && !e.repeat && e.key.toLowerCase() === 'f') {
+      if (e.repeat) return
+      const key = e.key.toLowerCase()
+      if (e.ctrlKey && key === 'f') {
         e.preventDefault()
         toggleFullscreen()
+      } else if (!e.ctrlKey && !e.metaKey && key === 'm') {
+        toggleMute()
       }
     }
     window.addEventListener('keydown', onKey)

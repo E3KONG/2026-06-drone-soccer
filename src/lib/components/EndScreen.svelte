@@ -44,6 +44,18 @@
     })
   }
 
+  // let the vertical wheel browse the horizontal strip (portrait is already
+  // vertical, so leave the native wheel alone there)
+  const wheelScroll = (node) => {
+    const onWheel = (e) => {
+      if (portrait || !e.deltaY) return
+      e.preventDefault()
+      node.scrollLeft += e.deltaY
+    }
+    node.addEventListener('wheel', onWheel, { passive: false })
+    return { destroy: () => node.removeEventListener('wheel', onWheel) }
+  }
+
   // dim the prev/next arrow once the strip is scrolled to that edge.
   let atStart = $state(true)
   let atEnd = $state(false)
@@ -152,7 +164,12 @@
           >
         </button>
       {/if}
-      <div class="shot-list" bind:this={listEl} onscroll={updateEdges}>
+      <div
+        class="shot-list"
+        bind:this={listEl}
+        onscroll={updateEdges}
+        use:wheelScroll
+      >
         {#each goalShots.items as shot (shot.id)}
           <button
             class="shot"
@@ -248,8 +265,7 @@
     text-align: right;
     letter-spacing: calc(-12 * var(--u));
     color: rgba(255, 255, 255, 1);
-    text-shadow: 0 calc(3 * var(--u)) calc(10 * var(--u))
-      rgba(255, 255, 255, 0.5);
+    text-shadow: 0 calc(3 * var(--u)) calc(10 * var(--u)) rgba(40, 40, 40, 0.1);
   }
   .goals {
     display: none;
