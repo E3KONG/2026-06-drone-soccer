@@ -17,6 +17,12 @@
     game.paused = false
   }
 
+  // practice → offer the 3-min challenge instead of a plain restart
+  const playMatch = () => {
+    game.mode = 'match'
+    restartGame() // restart in match mode sets the timer + countdown, unpauses
+  }
+
   const toggleGuide = () => (game.controlGuide = !game.controlGuide)
 </script>
 
@@ -42,7 +48,11 @@
     </button>
   </div>
   <MenuItem onclick={resume}>繼續</MenuItem>
-  <MenuItem onclick={restartGame}>重新開始</MenuItem>
+  {#if game.mode === 'practice'}
+    <MenuItem onclick={playMatch}>3分鐘挑戰</MenuItem>
+  {:else}
+    <MenuItem onclick={restartGame}>重新開始</MenuItem>
+  {/if}
   <MenuItem onclick={toMenu}>返回主選單</MenuItem>
   {#if isTouch && game.mode === 'practice'}
     <MenuItem selected={game.controlGuide} onclick={toggleGuide}>
