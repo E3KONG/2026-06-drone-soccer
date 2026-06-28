@@ -1,6 +1,7 @@
 // Shared menu navigation: arrow keys / gamepad d-pad + stick move a highlight
-// across the `.menu-item` buttons inside `node`; Enter, Space (native to the
-// focused button) or the gamepad A button selects. Apply with `use:menuNav`.
+// across the `.menu-item` buttons inside `node`; Enter (native to the focused
+// button) or the gamepad A button selects. Space is reserved for pause toggle.
+// Apply with `use:menuNav`.
 //
 // The `.is-active` highlight only shows while the player is actually using a
 // keyboard or gamepad. Using the mouse or touch clears it, so those users get
@@ -48,8 +49,11 @@ export function menuNav(node) {
       e.preventDefault()
       e.stopPropagation()
       move(-1)
+    } else if (e.key === ' ') {
+      // Space is reserved for pause; block its native button activation.
+      e.preventDefault()
     }
-    // Enter / Space are handled natively by the focused button.
+    // Enter is handled natively by the focused button (confirm selection).
   }
   // On window, not node: nothing inside is focused until the player navigates.
   window.addEventListener('keydown', onKey)

@@ -18,8 +18,8 @@
   --color-red-100: #fff0f2;
   --color-blue-200: #b9e8ff;
   --color-blue-400: #27b3f5;
-  --color-yellow-400: #F8C341;
-  --color-red-400: #F76977;
+  --color-yellow-400: #f8c341;
+  --color-red-400: #f76977;
 }
 
 html,
@@ -42,8 +42,8 @@ body {
   border: 0;
   background: transparent;
   cursor: pointer;
-  font-family: "WDXL Lubrifont TC", system-ui, sans-serif;
-  font-size: calc(64 * var(--u));
+  font-family: 'WDXL Lubrifont TC', system-ui, sans-serif;
+  font-size: calc(88 * var(--u));
   line-height: 1;
   color: #fff;
   text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.25);
