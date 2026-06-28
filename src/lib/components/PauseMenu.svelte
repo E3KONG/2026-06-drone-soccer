@@ -2,12 +2,15 @@
   import { game, restartGame, toMenu } from '../state/game.svelte.ts'
   import { resetInput } from '../state/input.svelte.ts'
   import { audio, toggleMute } from '../state/audio.svelte.ts'
+  import { toggleFullscreen, canFullscreen } from '../fullscreen.js'
   import { menuNav } from '../menuNav.js'
   import MenuItem from './MenuItem.svelte'
   import soundOnUrl from '../../assets/hud/Icon_SoundOn.svg?url'
   import soundMuteUrl from '../../assets/hud/Icon_SoundMute.svg?url'
+  import iconFullScreenUrl from '../../assets/hud/Icon-fullScreen.svg?url'
 
   const isTouch = matchMedia('(pointer: coarse)').matches
+  const fsLabel = canFullscreen() ? 'Toggle fullscreen' : 'Open in new tab'
 
   const resume = () => {
     resetInput()
@@ -19,15 +22,25 @@
 
 <div class="pause-menu" use:menuNav>
   <div class="backdrop"></div>
-  <button
-    class="sound-button"
-    type="button"
-    aria-label="Toggle sound"
-    aria-pressed={audio.muted}
-    onclick={toggleMute}
-  >
-    <img src={audio.muted ? soundMuteUrl : soundOnUrl} alt="" />
-  </button>
+  <div class="top-buttons">
+    <button
+      class="icon-button"
+      type="button"
+      aria-label="Toggle sound"
+      aria-pressed={audio.muted}
+      onclick={toggleMute}
+    >
+      <img src={audio.muted ? soundMuteUrl : soundOnUrl} alt="" />
+    </button>
+    <button
+      class="icon-button"
+      type="button"
+      aria-label={fsLabel}
+      onclick={toggleFullscreen}
+    >
+      <img src={iconFullScreenUrl} alt="" />
+    </button>
+  </div>
   <MenuItem onclick={resume}>繼續</MenuItem>
   <MenuItem onclick={restartGame}>重新開始</MenuItem>
   <MenuItem onclick={toMenu}>返回主選單</MenuItem>
@@ -67,11 +80,15 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
   }
-  .sound-button {
+  .top-buttons {
     position: absolute;
     top: calc(100 * var(--u));
-    right: 50%;
-    transform: translateX(50%);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: calc(50 * var(--u));
+  }
+  .icon-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -84,12 +101,12 @@
     cursor: pointer;
     transition: all 0.15s ease-in-out;
   }
-  .sound-button img {
+  .icon-button img {
     width: 100%;
     height: 100%;
     filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.8));
   }
-  .sound-button:hover {
+  .icon-button:hover {
     opacity: 1;
     filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
   }

@@ -13,7 +13,9 @@
   import MenuItem from './MenuItem.svelte'
   import KeyGuide from './KeyGuide.svelte'
   import TouchGuide from './TouchGuide.svelte'
-  import { toggleFullscreen } from '../fullscreen.js'
+  import { toggleFullscreen, canFullscreen } from '../fullscreen.js'
+
+  const fsLabel = canFullscreen() ? 'Toggle fullscreen' : 'Open in new tab'
 
   // controller-connected indicator for the guide screen
   let padConnected = $state(false)
@@ -61,7 +63,7 @@
   <button
     class="icon-button fullscreen-button"
     type="button"
-    aria-label="Toggle fullscreen"
+    aria-label={fsLabel}
     onclick={toggleFullscreen}
   >
     <img src={iconFullScreenUrl} alt="" />
@@ -174,6 +176,16 @@
   }
   .sound-button {
     right: calc(185 * var(--u));
+  }
+  @media (orientation: portrait) {
+    .fullscreen-button {
+      top: calc(90 * var(--u));
+      right: calc(90 * var(--u));
+    }
+    .sound-button {
+      top: calc(100 * var(--u));
+      left: calc(100 * var(--u));
+    }
   }
   .logotype {
     position: absolute;
@@ -362,12 +374,6 @@
   @media (orientation: portrait) {
     .start {
       --u: min(0.092592593vw, 0.052083333vh);
-    }
-    .fullscreen-button {
-      display: none;
-    }
-    .sound-button {
-      right: calc(100 * var(--u));
     }
     .logotype {
       left: 50%;

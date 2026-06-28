@@ -31,9 +31,6 @@
   let orbitYawOffset = 0
   let orbitPitch = DEFAULT_PITCH
   let cameraDistance = DEFAULT_DISTANCE
-  let isDragging = false
-  let lastPointerX = 0
-  let lastPointerY = 0
 
   const targetPos = new Vector3()
   const offset = new Vector3()
@@ -46,43 +43,6 @@
 
   $effect(() => {
     const canvas = renderer.domElement
-
-    const setDragging = (dragging) => {
-      isDragging = dragging
-      canvas.style.cursor = dragging ? 'grabbing' : 'grab'
-    }
-
-    const handlePointerDown = (event) => {
-      if (event.pointerType === 'touch') return
-      if (event.button !== 0) return
-      lastPointerX = event.clientX
-      lastPointerY = event.clientY
-      canvas.setPointerCapture(event.pointerId)
-      setDragging(true)
-    }
-
-    const handlePointerMove = (event) => {
-      if (!isDragging) return
-      const dx = event.clientX - lastPointerX
-      const dy = event.clientY - lastPointerY
-      lastPointerX = event.clientX
-      lastPointerY = event.clientY
-
-      orbitYawOffset -= dx * ROTATE_SENSITIVITY
-      orbitPitch = MathUtils.clamp(
-        orbitPitch - dy * ROTATE_SENSITIVITY,
-        MIN_PITCH,
-        MAX_PITCH,
-      )
-    }
-
-    const handlePointerUp = (event) => {
-      if (!isDragging) return
-      if (canvas.hasPointerCapture(event.pointerId)) {
-        canvas.releasePointerCapture(event.pointerId)
-      }
-      setDragging(false)
-    }
 
     const handleWheel = (event) => {
       event.preventDefault()
@@ -99,22 +59,12 @@
       }
     }
 
-    canvas.style.cursor = 'grab'
     canvas.style.touchAction = 'none'
-    canvas.addEventListener('pointerdown', handlePointerDown)
-    canvas.addEventListener('pointermove', handlePointerMove)
-    canvas.addEventListener('pointerup', handlePointerUp)
-    canvas.addEventListener('pointercancel', handlePointerUp)
     canvas.addEventListener('wheel', handleWheel, { passive: false })
     window.addEventListener('keydown', handleKeyDown)
 
     return () => {
-      canvas.style.cursor = ''
       canvas.style.touchAction = ''
-      canvas.removeEventListener('pointerdown', handlePointerDown)
-      canvas.removeEventListener('pointermove', handlePointerMove)
-      canvas.removeEventListener('pointerup', handlePointerUp)
-      canvas.removeEventListener('pointercancel', handlePointerUp)
       canvas.removeEventListener('wheel', handleWheel)
       window.removeEventListener('keydown', handleKeyDown)
     }
