@@ -22,6 +22,7 @@
   const start = (mode) => {
     game.mode = mode
     score.value = 0
+    score.shock = 0
     game.over = false
     if (mode === 'match') {
       game.timeLeft = 180

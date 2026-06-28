@@ -302,6 +302,7 @@
 {#if game.mode === 'match'}
   <div
     class="timer"
+    class:caution={game.timeLeft <= 60 && game.timeLeft > 30}
     class:low={game.timeLeft <= 30}
     aria-label="Time remaining"
   >
@@ -539,15 +540,15 @@
     left: 50%;
     z-index: 25;
     pointer-events: none;
-    color: #0066ff40;
+    color: #ffffff40;
     -webkit-text-stroke-width: 2px;
-    -webkit-text-stroke-color: #06f;
+    -webkit-text-stroke-color: #fff;
     font-family: 'WDXL Lubrifont TC', system-ui, sans-serif;
-    font-size: clamp(160px, 40vw, 520px);
+    font-size: clamp(160px, 70vw, 520px);
     line-height: 1;
     text-shadow:
-      0 0 30px var(--color-blue-400),
-      0 0 60px #0066ff40;
+      0 0 30px #fff,
+      0 0 60px #ffffff40;
     animation: countdown-pop 1s ease-out both;
   }
   @keyframes countdown-pop {
@@ -773,11 +774,14 @@
     line-height: 1;
     letter-spacing: 0;
     text-align: center;
-    text-shadow: 0 0 12px rgba(255, 255, 255, 0.28);
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+  }
+  .timer.caution {
+    text-shadow: 0 0 20px #f7697780;
   }
   .timer.low {
     color: var(--color-red-400);
-    text-shadow: 0 0 12px var(--color-red-400);
+    text-shadow: 0 0 15px var(--color-red-400);
   }
   .score-hud {
     bottom: calc(35 * var(--hud-u) + var(--label-gap));
@@ -787,12 +791,16 @@
     align-items: center;
     justify-content: center;
     width: 120px;
-    color: rgba(255, 255, 255, 0.96);
+    color: rgba(255, 255, 255, 0.7);
     font-size: clamp(72px, 6.7vw, 150px);
     line-height: 0.9;
     letter-spacing: 0;
     text-align: center;
-    text-shadow: 0 0 12px rgba(255, 255, 255, 0.24);
+    text-shadow:
+      0 0 30px #fff,
+      0 0 60px #ffffff40;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: #fff;
   }
   .fullscreen-button {
     top: 30px;

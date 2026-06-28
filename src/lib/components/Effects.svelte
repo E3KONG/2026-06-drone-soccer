@@ -13,7 +13,7 @@
   const BLOOM_RADIUS = 0.4
   const BLOOM_THRESHOLD = 2.0
 
-  // --- Shockwave on score ---
+  // --- Shockwave ---
   const SHOCK_DURATION = 2
   const SHOCK_RING_WIDTH = 0.3
   const SHOCK_ABERRATION = 0.1
