@@ -3,6 +3,7 @@
   import { useGltf } from '@threlte/extras'
   import { MathUtils, Euler, Vector3, Color } from 'three'
   import droneUrl from '../../assets/drone-soccer.glb?url'
+  import thrustUrl from '../../assets/audio/DroneSoccer_ThrustLoop.mp3?url'
   import { input } from '../state/input.svelte.ts'
   import { dronePos } from '../state/droneState.svelte.ts'
   import { warning } from '../state/warning.svelte.ts'
@@ -63,6 +64,22 @@
   let droneRef = $state()
   let goalPointerRef = $state()
   const vel = new Vector3()
+  const THRUST_MAX_GAIN = 0.4
+  const audioCtx = new AudioContext()
+  const thrustGain = audioCtx.createGain()
+  thrustGain.gain.value = 0
+  thrustGain.connect(audioCtx.destination)
+  let thrustVol = 0
+  fetch(thrustUrl)
+    .then((r) => r.arrayBuffer())
+    .then((b) => audioCtx.decodeAudioData(b))
+    .then((buf) => {
+      const src = audioCtx.createBufferSource()
+      src.buffer = buf
+      src.loop = true
+      src.connect(thrustGain)
+      src.start()
+    })
   let yaw = 0
   let yawVel = 0
   let throttleSmooth = 0
@@ -164,8 +181,11 @@
   })
 
   useTask(() => {
-    if (!droneRef || game.paused || game.over || (game.countdown ?? 0) > 0)
+    if (!droneRef || game.paused || game.over || (game.countdown ?? 0) > 0) {
+      thrustVol = 0
+      thrustGain.gain.value = 0
       return
+    }
 
     yawVel += input.yaw * YAW_ACCEL
     yawVel *= YAW_DAMPING
@@ -180,8 +200,8 @@
     thrustUp.set(0, 1, 0).applyQuaternion(droneRef.quaternion)
     const upY = Math.max(thrustUp.y, 0.5)
     const comp = 1 - LIFT_COMPENSATION * (1 - upY)
-    const thrust = HOVER_THRUST / comp + throttleSmooth * THROTTLE_THRUST
-    thrustUp.multiplyScalar(thrust)
+    const liftThrust = HOVER_THRUST / comp + throttleSmooth * THROTTLE_THRUST
+    thrustUp.multiplyScalar(liftThrust)
     vel.add(thrustUp)
     vel.y -= GRAVITY
     vel.clampScalar(-MAX_VEL, MAX_VEL)
@@ -262,6 +282,22 @@
     }
 
     const airborne = droneRef.position.y > BOUNDS_MIN.y + 0.01
+
+    const effort = Math.max(
+      Math.abs(input.throttle),
+      Math.abs(input.pitch),
+      Math.abs(input.roll),
+      Math.abs(input.yaw),
+    )
+    const targetVol = MathUtils.clamp(
+      (airborne ? 0.15 : 0) + effort * 0.85,
+      0,
+      1,
+    )
+    if (audioCtx.state === 'suspended') audioCtx.resume()
+    thrustVol += (targetVol - thrustVol) * 0.1
+    thrustGain.gain.value = thrustVol * THRUST_MAX_GAIN
+
     const baseSpin = airborne ? PROP_SPIN : 0
     for (const f of fins) {
       const ud = f.userData

@@ -13,6 +13,12 @@
   import iconFullScreenUrl from '../../assets/hud/Icon-fullScreen.svg?url'
   import iconPauseUrl from '../../assets/hud/Icon-pause.svg?url'
   import iconReplayUrl from '../../assets/hud/Icon-replay.svg?url'
+  import gameStartUrl from '../../assets/audio/DroneSoccer_GameStart.mp3?url'
+  import gameFinalUrl from '../../assets/audio/DroneSoccer_GameFinal.mp3?url'
+
+  const gameStartSound = new Audio(gameStartUrl)
+  const gameFinalSound = new Audio(gameFinalUrl)
+  gameFinalSound.loop = true
 
   const staticUiSvg = staticUiRaw.replaceAll(
     'fill="white"',
@@ -120,6 +126,24 @@
   const formatTime = (s) =>
     `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
 
+  let countingDown = false
+  $effect(() => {
+    const active = game.countdown !== null
+    if (active && !countingDown) gameStartSound.play()
+    countingDown = active
+  })
+
+  $effect(() => {
+    if (game.paused || game.over) gameFinalSound.pause()
+  })
+
+  $effect(() => {
+    game.resetTick
+    gameFinalSound.pause()
+    gameFinalSound.currentTime = 0
+    gameFinalSound.volume = 0
+  })
+
   $effect(() => {
     if (game.countdown === null || game.paused) return
     const id = setInterval(() => {
@@ -141,6 +165,10 @@
       if (game.timeLeft > 0) {
         game.timeLeft -= 1
         if (game.timeLeft === 0) game.over = true
+        if (game.timeLeft <= 60 && game.timeLeft > 0) {
+          if (gameFinalSound.paused) gameFinalSound.play()
+          gameFinalSound.volume = (60 - game.timeLeft) / 60
+        }
       }
     }, 1000)
     return () => clearInterval(id)
