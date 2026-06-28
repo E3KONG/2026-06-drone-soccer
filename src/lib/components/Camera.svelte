@@ -7,7 +7,7 @@
   const MIN_DISTANCE = 0.5
   const MAX_DISTANCE = 4
   const isTouch = matchMedia('(pointer: coarse)').matches
-  const REACH = isTouch ? 1.75 : 1.25
+  const REACH = isTouch ? 1.55 : 1.25
   const LOOK_OFFSET_Y = isTouch ? -0.1 : 0
   const HEIGHT = 0.5
   const DEFAULT_DISTANCE = Math.hypot(REACH, HEIGHT)
