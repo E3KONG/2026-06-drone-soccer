@@ -5,11 +5,26 @@
   import logotypeUrl from '../../assets/start/Logotype.png?url'
   import descriptionUrl from '../../assets/start/Description.png?url'
   import iconFullScreenUrl from '../../assets/hud/Icon-fullScreen.svg?url'
+  import controllerIconSvg from '../../assets/hud/Icon_Controller.svg?raw'
   import { menuNav } from '../menuNav.js'
   import MenuItem from './MenuItem.svelte'
   import KeyGuide from './KeyGuide.svelte'
   import TouchGuide from './TouchGuide.svelte'
   import { toggleFullscreen } from '../fullscreen.js'
+
+  // controller-connected indicator for the guide screen
+  let padConnected = $state(false)
+  $effect(() => {
+    const check = () =>
+      (padConnected = [...(navigator.getGamepads?.() ?? [])].some(Boolean))
+    check()
+    window.addEventListener('gamepadconnected', check)
+    window.addEventListener('gamepaddisconnected', check)
+    return () => {
+      window.removeEventListener('gamepadconnected', check)
+      window.removeEventListener('gamepaddisconnected', check)
+    }
+  })
 
   const start = (mode) => {
     game.mode = mode
@@ -51,8 +66,12 @@
     class="control-guide"
     type="button"
     data-nav-item
-    onclick={() => (game.showGuide = true)}>控制器指引</button
+    onclick={() => (game.showGuide = true)}
   >
+    <span class="cg-pad" class:on={padConnected}>{@html controllerIconSvg}</span
+    >
+    <span>控制器指引</span>
+  </button>
   <div class="divider"></div>
 
   <img
@@ -71,6 +90,10 @@
       aria-label="關閉控制器指引"
       onclick={() => (game.showGuide = false)}
     ></button>
+    <div class="pad-indicator" class:on={padConnected}>
+      <span class="pad-icon">{@html controllerIconSvg}</span>
+      <span>{padConnected ? '手把已連線' : '未偵測到遊戲手把'}</span>
+    </div>
     <button
       class="fullscreen-button"
       type="button"
@@ -159,6 +182,9 @@
     position: absolute;
     left: calc(100 * var(--u));
     bottom: calc(190 * var(--u));
+    display: inline-flex;
+    align-items: center;
+    gap: calc(10 * var(--u));
     padding: 0;
     border: 0;
     background: none;
@@ -169,6 +195,25 @@
     color: rgba(255, 255, 255, 0.5);
     text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.25);
     cursor: pointer;
+  }
+  .cg-pad {
+    display: inline-flex;
+    transition: filter 0.2s ease;
+  }
+  .cg-pad :global(svg) {
+    display: block;
+    width: calc(50 * var(--u));
+    height: auto;
+  }
+  .cg-pad :global(svg path) {
+    fill: rgba(255, 255, 255, 0.4);
+    transition: fill 0.2s ease;
+  }
+  .cg-pad.on :global(svg path) {
+    fill: #fff;
+  }
+  .cg-pad.on {
+    filter: drop-shadow(0 0 calc(4 * var(--u)) rgba(255, 255, 255, 0.2));
   }
   .control-guide:hover,
   .control-guide:focus-visible,
@@ -206,12 +251,50 @@
     gap: calc(50 * var(--u));
     align-items: center;
   }
+  .pad-indicator {
+    position: absolute;
+    left: 50%;
+    top: calc(110 * var(--u));
+    transform: translateX(-50%);
+    z-index: 46;
+    display: flex;
+    align-items: center;
+    gap: calc(12 * var(--u));
+    font-family: 'Swei Marker Sans', system-ui, sans-serif;
+    font-size: var(--fs-xs);
+    font-weight: 500;
+    line-height: 1.3;
+    color: rgba(255, 255, 255, 0.4);
+    text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+  }
+  .pad-icon {
+    display: inline-flex;
+    transition: filter 0.2s ease;
+  }
+  .pad-icon :global(svg) {
+    display: block;
+    width: auto;
+    height: calc(var(--fs-xs) * 0.9);
+  }
+  .pad-icon :global(svg path) {
+    fill: rgba(255, 255, 255, 0.4);
+    transition: fill 0.2s ease;
+  }
+  .pad-indicator.on {
+    color: #fff;
+    filter: drop-shadow(0 0 calc(10 * var(--u)) #ffffffcc);
+  }
+  .pad-indicator.on .pad-icon :global(svg path) {
+    fill: #fff;
+  }
   .guide-close {
     position: absolute;
     left: 50%;
     bottom: calc(80 * var(--u));
     transform: translateX(-50%);
     z-index: 46;
+    font-family: 'Swei Marker Sans', system-ui, sans-serif;
     font-size: var(--fs-xs);
     color: rgba(255, 255, 255, 0.35);
     text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.25);
