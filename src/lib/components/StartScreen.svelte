@@ -8,7 +8,7 @@
   import controllerIconSvg from '../../assets/hud/Icon_Controller.svg?raw'
   import soundOnUrl from '../../assets/hud/Icon_SoundOn.svg?url'
   import soundMuteUrl from '../../assets/hud/Icon_SoundMute.svg?url'
-  import { audio } from '../state/audio.svelte.ts'
+  import { audio, toggleMute } from '../state/audio.svelte.ts'
   import { menuNav } from '../menuNav.js'
   import MenuItem from './MenuItem.svelte'
   import KeyGuide from './KeyGuide.svelte'
@@ -54,7 +54,7 @@
     type="button"
     aria-label="Toggle sound"
     aria-pressed={audio.muted}
-    onclick={() => (audio.muted = !audio.muted)}
+    onclick={toggleMute}
   >
     <img src={audio.muted ? soundMuteUrl : soundOnUrl} alt="" />
   </button>
@@ -173,7 +173,7 @@
     right: calc(100 * var(--u));
   }
   .sound-button {
-    right: calc(170 * var(--u));
+    right: calc(185 * var(--u));
   }
   .logotype {
     position: absolute;

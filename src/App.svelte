@@ -5,6 +5,7 @@
   import Joystick from './lib/components/Joystick.svelte'
   import HUD from './lib/components/HUD.svelte'
   import StartScreen from './lib/components/StartScreen.svelte'
+  import BackgroundMusic from './lib/components/BackgroundMusic.svelte'
   import { game } from './lib/state/game.svelte.ts'
   import { toggleFullscreen } from './lib/fullscreen.js'
 
@@ -37,6 +38,7 @@
 </script>
 
 <Scene />
+<BackgroundMusic />
 
 {#if game.started}
   <KeyboardControls />

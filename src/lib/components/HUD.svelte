@@ -20,10 +20,13 @@
   const gameFinalSound = new Audio(gameFinalUrl)
   gameFinalSound.loop = true
 
+  // base volume for the game-final ramp; multiplied by the master gain
+  let finalBase = $state(0)
   $effect(() => {
-    gameStartSound.muted = audio.muted
-    gameFinalSound.muted = audio.muted
+    gameStartSound.volume = audio.gain
+    gameFinalSound.volume = finalBase * audio.gain
   })
+
 
   const staticUiSvg = staticUiRaw.replaceAll(
     'fill="white"',
@@ -133,7 +136,7 @@
     game.resetTick
     gameFinalSound.pause()
     gameFinalSound.currentTime = 0
-    gameFinalSound.volume = 0
+    finalBase = 0
   })
 
   $effect(() => {
@@ -159,7 +162,7 @@
         if (game.timeLeft === 0) game.over = true
         if (game.timeLeft <= 60 && game.timeLeft > 0) {
           if (gameFinalSound.paused) gameFinalSound.play()
-          gameFinalSound.volume = (60 - game.timeLeft) / 60
+          finalBase = (60 - game.timeLeft) / 60
         }
       }
     }, 1000)

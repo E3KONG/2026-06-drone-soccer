@@ -1,8 +1,11 @@
 <script>
   import { game, restartGame, toMenu } from '../state/game.svelte.ts'
   import { resetInput } from '../state/input.svelte.ts'
+  import { audio, toggleMute } from '../state/audio.svelte.ts'
   import { menuNav } from '../menuNav.js'
   import MenuItem from './MenuItem.svelte'
+  import soundOnUrl from '../../assets/hud/Icon_SoundOn.svg?url'
+  import soundMuteUrl from '../../assets/hud/Icon_SoundMute.svg?url'
 
   const isTouch = matchMedia('(pointer: coarse)').matches
 
@@ -16,6 +19,15 @@
 
 <div class="pause-menu" use:menuNav>
   <div class="backdrop"></div>
+  <button
+    class="sound-button"
+    type="button"
+    aria-label="Toggle sound"
+    aria-pressed={audio.muted}
+    onclick={toggleMute}
+  >
+    <img src={audio.muted ? soundMuteUrl : soundOnUrl} alt="" />
+  </button>
   <MenuItem onclick={resume}>繼續</MenuItem>
   <MenuItem onclick={restartGame}>重新開始</MenuItem>
   <MenuItem onclick={toMenu}>返回主選單</MenuItem>
@@ -54,6 +66,32 @@
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+  }
+  .sound-button {
+    position: absolute;
+    top: calc(100 * var(--u));
+    right: 50%;
+    transform: translateX(50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(50 * var(--u));
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    opacity: 0.5;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+  }
+  .sound-button img {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.8));
+  }
+  .sound-button:hover {
+    opacity: 1;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
   }
 
   @media (orientation: portrait) {
