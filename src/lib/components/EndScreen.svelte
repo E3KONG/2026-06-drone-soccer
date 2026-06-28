@@ -17,6 +17,9 @@
   // to the static image when no goals were captured.
   let selectedUrl = $state(null)
   const bgSrc = $derived(selectedUrl ?? goalShots.items.at(-1)?.url ?? bgUrl)
+  // goal shots are already graded/dark, so skip the mobile dim that the static
+  // fallback needs for text legibility.
+  const isGoalBg = $derived(bgSrc !== bgUrl)
 
   // scrollable thumbnail strip: up to 5 visible on desktop (row), 10 on mobile
   // (column). Arrows scroll by one viewport; native scroll/touch also works.
@@ -88,7 +91,8 @@
         ih * s,
       )
       // brightness(0.5) on portrait == 50% black overlay over an opaque image
-      if (portrait) {
+      // (static fallback only; goal shots are already graded dark)
+      if (portrait && !isGoalBg) {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
         ctx.fillRect(0, 0, w, h)
       }
@@ -125,7 +129,13 @@
 </script>
 
 <div class="end" class:capturing bind:this={endEl}>
-  <img class="bg" src={bgSrc} alt="" bind:this={bgEl} />
+  <img
+    class="bg"
+    class:goal-bg={isGoalBg}
+    src={bgSrc}
+    alt=""
+    bind:this={bgEl}
+  />
 
   {#if goalShots.items.length > 0}
     <div class="shot-picker">
@@ -248,7 +258,7 @@
     line-height: 0.5;
     letter-spacing: calc(1 * var(--u));
     color: #fff;
-    text-shadow: 0 calc(3 * var(--u)) calc(10 * var(--u))
+    text-shadow: 0 calc(4 * var(--u)) calc(8 * var(--u))
       rgba(255, 255, 255, 0.5);
   }
   .capturing .congrats,
@@ -385,8 +395,11 @@
       --u: min(0.092592593vw, 0.052083333vh);
     }
     .bg {
-      filter: brightness(0.5);
+      filter: brightness(0.4);
       object-position: 33% center;
+    }
+    .bg.goal-bg {
+      filter: none;
     }
     .shot-picker {
       flex-direction: column;
@@ -421,15 +434,18 @@
       text-align: center;
     }
     .final-score {
+      font-size: calc(var(--fs-xl) * 0.8);
       text-shadow: none;
     }
     .goals {
-      font-size: calc(var(--fs-lg) * 0.6);
+      font-size: calc(var(--fs-lg) * 0.5);
+      line-height: 0.9;
       text-shadow: none;
     }
     .congrats {
       text-align: center;
       font-size: calc(var(--fs-sm) * 0.9);
+      text-shadow: 0 calc(6 * var(--u)) calc(6 * var(--u)) rgba(0, 0, 0, 0.7);
     }
     .shot-picker {
       top: 50%;

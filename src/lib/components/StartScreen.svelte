@@ -19,18 +19,6 @@
     else if (root.webkitRequestFullscreen) root.webkitRequestFullscreen()
   }
 
-  // ponytail: dev-only — starts a real game so the scene renders, fakes a few
-  // goals (each triggers GoalRecorder capture), then jumps to the end screen.
-  const debugScore = async () => {
-    start('practice')
-    await new Promise((r) => setTimeout(r, 600))
-    for (let i = 0; i < 12; i++) {
-      score.value++
-      await new Promise((r) => setTimeout(r, 400))
-    }
-    game.over = true
-  }
-
   const start = (mode) => {
     game.mode = mode
     score.value = 0
@@ -64,8 +52,6 @@
   <div class="menu" use:menuNav>
     <MenuItem onclick={() => start('practice')}>練習場</MenuItem>
     <MenuItem onclick={() => start('match')}>3分鐘挑戰</MenuItem>
-    <!-- ponytail: dev-only shortcut to preview the end screen; delete before ship. -->
-    <MenuItem onclick={debugScore}>模擬進球 (DEV)</MenuItem>
   </div>
 
   <!-- ponytail: 設定 is visual-only; no settings system exists yet. Wire up when one does. -->
@@ -120,6 +106,7 @@
   .fullscreen-button img {
     width: 100%;
     height: 100%;
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.8));
   }
   .fullscreen-button:hover {
     filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));

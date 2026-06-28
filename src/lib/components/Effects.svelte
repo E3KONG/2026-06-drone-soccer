@@ -79,7 +79,11 @@
 
   $effect(() => {
     captureRig.composer = composer
-    return () => (captureRig.composer = null)
+    captureRig.shockPass = shockPass
+    return () => {
+      captureRig.composer = null
+      captureRig.shockPass = null
+    }
   })
 
   $effect(() => {
