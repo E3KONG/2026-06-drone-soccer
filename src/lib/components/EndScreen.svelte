@@ -3,20 +3,87 @@
   import { score } from '../state/score.svelte.ts'
   import { menuNav } from '../menuNav.js'
   import MenuItem from './MenuItem.svelte'
-  import bgUrl from '../../assets/end/EndScreenBackground.png?url'
+  import bgUrl from '../../assets/end/EndScreenBackground.webp?url'
   import logoUrl from '../../assets/hud/kids-reporter-logo.svg?url'
+  import { toPng } from 'html-to-image'
+  import { tick } from 'svelte'
 
-  // ponytail: screenshot capture lands later; placeholder no-op for now.
-  const shareScreenshot = () => {}
+  let endEl
+  let bgEl
+  let capturing = $state(false)
+
+  const shareScreenshot = async () => {
+    capturing = true
+    await tick()
+    await document.fonts.ready
+    await new Promise((r) => requestAnimationFrame(r))
+    try {
+      const rect = endEl.getBoundingClientRect()
+      const scale = 2
+      const w = Math.round(rect.width * scale)
+      const h = Math.round(rect.height * scale)
+      const canvas = document.createElement('canvas')
+      canvas.width = w
+      canvas.height = h
+      const ctx = canvas.getContext('2d')
+
+      // 1) Background drawn natively (drawImage is reliable on iOS; foreignObject
+      //    drops it). Replicate object-fit: cover + the portrait object-position.
+      const portrait = matchMedia('(orientation: portrait)').matches
+      const iw = bgEl.naturalWidth
+      const ih = bgEl.naturalHeight
+      const s = Math.max(w / iw, h / ih)
+      const posX = portrait ? 0.33 : 0.5 // matches the CSS object-position
+      ctx.drawImage(
+        bgEl,
+        (w - iw * s) * posX,
+        (h - ih * s) * 0.5,
+        iw * s,
+        ih * s
+      )
+      // brightness(0.5) on portrait == 50% black overlay over an opaque image
+      if (portrait) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+        ctx.fillRect(0, 0, w, h)
+      }
+
+      // 2) Text + logo overlay, captured transparent (bg hidden so it isn't
+      //    routed through the broken foreignObject image path).
+      bgEl.style.visibility = 'hidden'
+      const overlayUrl = await toPng(endEl, { pixelRatio: scale })
+      bgEl.style.visibility = ''
+      const overlay = new Image()
+      overlay.src = overlayUrl
+      await overlay.decode()
+      ctx.drawImage(overlay, 0, 0, w, h)
+
+      const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'))
+      const file = new File([blob], 'drone-soccer.png', { type: 'image/png' })
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file] })
+      } else {
+        const a = document.createElement('a')
+        a.href = URL.createObjectURL(blob)
+        a.download = 'drone-soccer.png'
+        a.click()
+        URL.revokeObjectURL(a.href)
+      }
+    } catch (e) {
+      console.error('screenshot failed', e)
+    } finally {
+      capturing = false
+    }
+  }
 </script>
 
-<div class="end">
-  <img class="bg" src={bgUrl} alt="" />
+<div class="end" class:capturing bind:this={endEl}>
+  <img class="bg" src={bgUrl} alt="" bind:this={bgEl} />
 
   <img class="logo" src={logoUrl} alt="少年報導者 THE REPORTER FOR KIDS" />
 
   <div class="panel">
     <div class="final-score">{score.value}</div>
+    <div class="goals">GOALS</div>
     <p class="congrats">
       恭喜你，射進 {score.value} 球！<br class="brk" />
       歡迎將畫面截圖，<br class="brk" />
@@ -71,7 +138,6 @@
     width: fit-content;
     display: flex;
     flex-direction: column;
-    gap: calc(0 * var(--u));
     align-items: flex-end;
   }
   .final-score {
@@ -83,6 +149,23 @@
     color: rgba(255, 255, 255, 1);
     text-shadow: 0 calc(3 * var(--u)) calc(10 * var(--u))
       rgba(255, 255, 255, 0.5);
+  }
+  .goals {
+    display: none;
+    font-family: 'WDXL Lubrifont TC', system-ui, sans-serif;
+    font-size: calc(var(--fs-lg) * 0.8);
+    line-height: 0.5;
+    letter-spacing: calc(1 * var(--u));
+    color: #fff;
+    text-shadow: 0 calc(3 * var(--u)) calc(10 * var(--u))
+      rgba(255, 255, 255, 0.5);
+  }
+  .capturing .congrats,
+  .capturing .actions {
+    display: none;
+  }
+  .capturing .goals {
+    display: block;
   }
   .congrats {
     width: 0;
@@ -157,6 +240,10 @@
       text-align: center;
     }
     .final-score {
+      text-shadow: none;
+    }
+    .goals {
+      font-size: calc(var(--fs-lg) * 0.6);
       text-shadow: none;
     }
     .congrats {
