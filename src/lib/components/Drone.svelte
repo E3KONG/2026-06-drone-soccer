@@ -5,6 +5,7 @@
   import droneUrl from '../../assets/drone-soccer.glb?url'
   import thrustUrl from '../../assets/audio/DroneSoccer_ThrustLoop.mp3?url'
   import { input } from '../state/input.svelte.ts'
+  import { audio } from '../state/audio.svelte.ts'
   import { dronePos } from '../state/droneState.svelte.ts'
   import { warning } from '../state/warning.svelte.ts'
   import { game } from '../state/game.svelte.ts'
@@ -296,7 +297,7 @@
     )
     if (audioCtx.state === 'suspended') audioCtx.resume()
     thrustVol += (targetVol - thrustVol) * 0.1
-    thrustGain.gain.value = thrustVol * THRUST_MAX_GAIN
+    thrustGain.gain.value = audio.muted ? 0 : thrustVol * THRUST_MAX_GAIN
 
     const baseSpin = airborne ? PROP_SPIN : 0
     for (const f of fins) {

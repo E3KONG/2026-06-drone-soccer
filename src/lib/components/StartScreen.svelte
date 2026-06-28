@@ -6,6 +6,9 @@
   import descriptionUrl from '../../assets/start/Description.png?url'
   import iconFullScreenUrl from '../../assets/hud/Icon-fullScreen.svg?url'
   import controllerIconSvg from '../../assets/hud/Icon_Controller.svg?raw'
+  import soundOnUrl from '../../assets/hud/Icon_SoundOn.svg?url'
+  import soundMuteUrl from '../../assets/hud/Icon_SoundMute.svg?url'
+  import { audio } from '../state/audio.svelte.ts'
   import { menuNav } from '../menuNav.js'
   import MenuItem from './MenuItem.svelte'
   import KeyGuide from './KeyGuide.svelte'
@@ -47,7 +50,16 @@
 
   <!-- <div class="stage"> -->
   <button
-    class="fullscreen-button"
+    class="icon-button sound-button"
+    type="button"
+    aria-label="Toggle sound"
+    aria-pressed={audio.muted}
+    onclick={() => (audio.muted = !audio.muted)}
+  >
+    <img src={audio.muted ? soundMuteUrl : soundOnUrl} alt="" />
+  </button>
+  <button
+    class="icon-button fullscreen-button"
     type="button"
     aria-label="Toggle fullscreen"
     onclick={toggleFullscreen}
@@ -95,7 +107,7 @@
       <span>{padConnected ? '手把已連線' : '未偵測到遊戲手把'}</span>
     </div>
     <button
-      class="fullscreen-button"
+      class="icon-button fullscreen-button"
       type="button"
       aria-label="Toggle fullscreen"
       onclick={toggleFullscreen}
@@ -132,10 +144,9 @@
     object-fit: cover;
     pointer-events: none;
   }
-  .fullscreen-button {
+  .icon-button {
     position: absolute;
     top: calc(118 * var(--u));
-    right: calc(100 * var(--u));
     z-index: 1;
     display: flex;
     align-items: center;
@@ -149,14 +160,20 @@
     cursor: pointer;
     transition: all 0.15s ease-in-out;
   }
-  .fullscreen-button img {
+  .icon-button img {
     width: 100%;
     height: 100%;
     filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.8));
   }
-  .fullscreen-button:hover {
+  .icon-button:hover {
     filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
     opacity: 1;
+  }
+  .fullscreen-button {
+    right: calc(100 * var(--u));
+  }
+  .sound-button {
+    right: calc(170 * var(--u));
   }
   .logotype {
     position: absolute;
@@ -307,8 +324,8 @@
     }
     .guide-menu {
       flex-direction: column;
-      gap: calc(30 * var(--u));
-      top: 40%;
+      gap: calc(55 * var(--u));
+      top: 37.5%;
     }
   }
   .divider {
@@ -348,6 +365,9 @@
     }
     .fullscreen-button {
       display: none;
+    }
+    .sound-button {
+      right: calc(100 * var(--u));
     }
     .logotype {
       left: 50%;

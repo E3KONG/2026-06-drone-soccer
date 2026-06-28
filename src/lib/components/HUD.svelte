@@ -2,6 +2,7 @@
   import { score } from '../state/score.svelte.ts'
   import { warning } from '../state/warning.svelte.ts'
   import { game, restartGame } from '../state/game.svelte.ts'
+  import { audio } from '../state/audio.svelte.ts'
   import PauseMenu from './PauseMenu.svelte'
   import EndScreen from './EndScreen.svelte'
   import KeyGuide from './KeyGuide.svelte'
@@ -18,6 +19,11 @@
   const gameStartSound = new Audio(gameStartUrl)
   const gameFinalSound = new Audio(gameFinalUrl)
   gameFinalSound.loop = true
+
+  $effect(() => {
+    gameStartSound.muted = audio.muted
+    gameFinalSound.muted = audio.muted
+  })
 
   const staticUiSvg = staticUiRaw.replaceAll(
     'fill="white"',
