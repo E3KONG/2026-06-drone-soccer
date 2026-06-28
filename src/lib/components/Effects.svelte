@@ -7,6 +7,7 @@
   import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
   import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js'
   import { score } from '../state/score.svelte.ts'
+  import { captureRig } from '../state/captureRig.ts'
 
   // --- Bloom ---
   const BLOOM_STRENGTH = 0.9
@@ -74,6 +75,11 @@
 
   $effect(() => {
     renderPass.camera = $camera
+  })
+
+  $effect(() => {
+    captureRig.composer = composer
+    return () => (captureRig.composer = null)
   })
 
   $effect(() => {
