@@ -26,8 +26,8 @@
      ad-hoc font-size calc()/clamp(). */
   --fs-xs: clamp(13px, 2.4vmin, 26px); /* captions, key hints */
   --fs-sm: clamp(20px, 4.1vmin, 44px); /* body copy, small labels */
-  --fs-md: clamp(30px, 6.7vmin, 72px); /* buttons, timer, menu items */
-  --fs-lg: clamp(60px, 14vmin, 150px); /* score */
+  --fs-md: clamp(40px, 6.7vmin, 72px); /* buttons, timer, menu items */
+  --fs-lg: clamp(80px, 23vmin, 150px); /* score */
   --fs-xl: clamp(130px, 50vmin, 520px); /* full-screen display numbers */
 }
 
@@ -55,7 +55,7 @@ body {
   font-size: var(--fs-md);
   line-height: 1;
   color: #fff;
-  text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.25);
+  text-shadow: 0 calc(6 * var(--u)) calc(6 * var(--u)) rgba(0, 0, 0, 0.5);
   transition: color 0.15s ease;
   opacity: 0.75;
 }

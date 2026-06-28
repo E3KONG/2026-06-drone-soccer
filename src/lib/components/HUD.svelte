@@ -4,7 +4,8 @@
   import { game, restartGame } from '../state/game.svelte.ts'
   import PauseMenu from './PauseMenu.svelte'
   import EndScreen from './EndScreen.svelte'
-  import KeyInterface from './KeyInterface.svelte'
+  import KeyMapUI from './KeyMapUI.svelte'
+  import TouchMapUI from './TouchMapUI.svelte'
   import staticUiRaw from '../../assets/hud/StaticUI.svg?raw'
   import flashSvg from '../../assets/hud/Flash.svg?raw'
   import flashTriangleUrl from '../../assets/hud/Flash-triangle.svg?url'
@@ -343,7 +344,8 @@
   <img src={iconFullScreenUrl} alt="" />
 </button>
 
-<KeyInterface {pressedKeys} />
+<KeyMapUI {pressedKeys} />
+<TouchMapUI />
 
 <style>
   .static-ui,

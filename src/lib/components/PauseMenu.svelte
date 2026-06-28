@@ -50,4 +50,10 @@
       gap: calc(40 * var(--u));
     }
   }
+  /* On touch, lift the menu up so it clears the joystick tutorial below. */
+  @media (pointer: coarse) {
+    .pause-menu {
+      padding-bottom: 3vh;
+    }
+  }
 </style>
