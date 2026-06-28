@@ -18,7 +18,11 @@
   <div class="panel">
     <div class="final-score">{score.value}</div>
     <p class="congrats">
-      恭喜你，射進 {score.value} 球！歡迎將畫面截圖，到報導者的 FB 或 IG 貼文底下留言，和大家分享你的成績，有機會抽精美好禮喔！
+      恭喜你，射進 {score.value} 球！<br class="brk" />
+      歡迎將畫面截圖，<br class="brk" />
+      到報導者FB或IG貼文留言，<br class="brk" />
+      和大家分享你的成績，<br class="brk" />
+      有機會抽精美好禮喔！
     </p>
   </div>
 
@@ -87,7 +91,7 @@
     font-weight: 500;
     font-size: calc(var(--fs-sm) * 0.7);
     line-height: 1.3;
-    letter-spacing: calc(0.5 * var(--u));
+    letter-spacing: calc(2 * var(--u));
     text-align: justify;
     color: #fff;
     text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.2);
@@ -117,7 +121,7 @@
     color: #fff;
     text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.25);
   }
-  .article .brk {
+  .brk {
     display: none;
   }
   .actions {
@@ -135,7 +139,7 @@
     }
     .bg {
       filter: brightness(0.5);
-      object-position: 65% center;
+      object-position: 33% center;
     }
     .logo {
       left: 50%;
@@ -148,7 +152,7 @@
       right: auto;
       top: calc(200 * var(--u));
       transform: translateX(-50%);
-      width: 60vw;
+      width: 100vw;
       align-items: center;
       text-align: center;
     }
@@ -179,7 +183,7 @@
       width: 100vw;
       text-align: center;
     }
-    .article .brk {
+    .brk {
       display: inline;
     }
     .article .dash {
