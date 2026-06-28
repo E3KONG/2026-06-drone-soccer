@@ -7,23 +7,16 @@
   import iconFullScreenUrl from '../../assets/hud/Icon-fullScreen.svg?url'
   import { menuNav } from '../menuNav.js'
   import MenuItem from './MenuItem.svelte'
-
-  const toggleFullscreen = async () => {
-    const root = document.documentElement
-    if (document.fullscreenElement || document.webkitFullscreenElement) {
-      if (document.exitFullscreen) await document.exitFullscreen()
-      else if (document.webkitExitFullscreen) document.webkitExitFullscreen()
-      return
-    }
-    if (root.requestFullscreen) await root.requestFullscreen()
-    else if (root.webkitRequestFullscreen) root.webkitRequestFullscreen()
-  }
+  import KeyGuide from './KeyGuide.svelte'
+  import TouchGuide from './TouchGuide.svelte'
+  import { toggleFullscreen } from '../fullscreen.js'
 
   const start = (mode) => {
     game.mode = mode
     score.value = 0
     score.shock = 0
     game.over = false
+    game.showGuide = false
     if (mode === 'match') {
       game.timeLeft = 180
       game.countdown = 3
@@ -34,7 +27,7 @@
   }
 </script>
 
-<div class="start">
+<div class="start" use:menuNav>
   <img class="bg" src={bgUrl} alt="" />
 
   <!-- <div class="stage"> -->
@@ -49,13 +42,17 @@
 
   <img class="logotype" src={logotypeUrl} alt="空中梅西 STRIKER" />
 
-  <div class="menu" use:menuNav>
+  <div class="menu">
     <MenuItem onclick={() => start('practice')}>練習場</MenuItem>
     <MenuItem onclick={() => start('match')}>3分鐘挑戰</MenuItem>
   </div>
 
-  <!-- ponytail: 設定 is visual-only; no settings system exists yet. Wire up when one does. -->
-  <div class="settings">設定</div>
+  <button
+    class="control-guide"
+    type="button"
+    data-nav-item
+    onclick={() => (game.showGuide = true)}>控制器指引</button
+  >
   <div class="divider"></div>
 
   <img
@@ -65,6 +62,32 @@
   />
   <p class="credit">kids.twreporter</p>
 </div>
+
+{#if game.showGuide}
+  <div class="guide-overlay">
+    <button
+      class="guide-dismiss"
+      type="button"
+      aria-label="關閉控制器指引"
+      onclick={() => (game.showGuide = false)}
+    ></button>
+    <button
+      class="fullscreen-button"
+      type="button"
+      aria-label="Toggle fullscreen"
+      onclick={toggleFullscreen}
+    >
+      <img src={iconFullScreenUrl} alt="" />
+    </button>
+    <KeyGuide pressedKeys={{}} />
+    <TouchGuide />
+    <div class="guide-menu" use:menuNav>
+      <MenuItem onclick={() => start('practice')}>練習場</MenuItem>
+      <MenuItem onclick={() => start('match')}>3分鐘挑戰</MenuItem>
+    </div>
+    <span class="guide-close">點擊任意處關閉</span>
+  </div>
+{/if}
 
 <!-- </div> -->
 
@@ -132,13 +155,78 @@
     align-items: flex-start;
   }
 
-  .settings {
+  .control-guide {
     position: absolute;
     left: calc(100 * var(--u));
     bottom: calc(190 * var(--u));
+    padding: 0;
+    border: 0;
+    background: none;
+    -webkit-appearance: none;
+    appearance: none;
+    font-family: inherit;
     font-size: var(--fs-sm);
     color: rgba(255, 255, 255, 0.5);
     text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+  }
+  .control-guide:hover,
+  .control-guide:focus-visible,
+  .control-guide.is-active {
+    outline: none;
+    color: #fff;
+  }
+  .guide-overlay {
+    --u: min(0.052083333vw, 0.092592593vh);
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+  }
+  .guide-dismiss {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    padding: 0;
+    border: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(0, 0, 0, 0.6);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+  }
+  .guide-menu {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 46;
+    display: flex;
+    flex-direction: column;
+    gap: calc(50 * var(--u));
+    align-items: center;
+  }
+  .guide-close {
+    position: absolute;
+    left: 50%;
+    bottom: calc(80 * var(--u));
+    transform: translateX(-50%);
+    z-index: 46;
+    font-size: var(--fs-xs);
+    color: rgba(255, 255, 255, 0.35);
+    text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+  }
+
+  @media (orientation: portrait) {
+    .guide-overlay {
+      --u: min(0.092592593vw, 0.052083333vh);
+    }
+    .guide-menu {
+      flex-direction: column;
+      gap: calc(30 * var(--u));
+      top: 40%;
+    }
   }
   .divider {
     position: absolute;
@@ -195,7 +283,7 @@
     .menu :global(.menu-item) {
       color: rgba(255, 255, 255, 0.85);
     }
-    .settings {
+    .control-guide {
       left: 50%;
       top: auto;
       bottom: calc(270 * var(--u));

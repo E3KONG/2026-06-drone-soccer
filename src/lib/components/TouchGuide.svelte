@@ -7,11 +7,15 @@
   const dirs = ['n', 's', 'w', 'e']
 </script>
 
-{#if game.mode === 'practice' && game.controlGuide && !game.paused}
+{#if game.showGuide || (game.mode === 'practice' && game.controlGuide && !game.paused)}
   <div class="touch-controls" aria-hidden="true">
     {#each [['left', leftHints], ['right', rightHints]] as [side, hints]}
       <div class="stick {side}">
         <div class="stick-base"></div>
+        {#if game.showGuide}
+          <!-- menu preview has no live Joystick, so draw a static knob -->
+          <div class="stick-knob"></div>
+        {/if}
         {#each dirs as dir}
           <img class="stick-arrow {dir}" src={triangleUrl} alt="" />
           <span class="stick-hint {dir}">{hints[dir]}</span>
@@ -59,6 +63,44 @@
       0 3px 3px rgba(255, 255, 255, 0.1),
       inset 3px 3px 10px rgba(0, 0, 0, 0.1),
       inset 0 -3px 3px rgba(255, 255, 255, 0.05);
+  }
+
+  /* static knob for the menu preview — mirrors the nipplejs .front stick */
+  .stick-knob {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 70px;
+    height: 70px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(at 50% 75%, #f2f2f2 0%, #d9d9d9 100%);
+    box-shadow:
+      inset 3px 3px 6px rgba(255, 255, 255, 0.3),
+      inset -3px -3px 6px rgba(0, 0, 0, 0.15),
+      0 1px 6px -3px rgba(0, 0, 0, 0.7),
+      0 2px 10px -6px rgba(0, 0, 0, 0.2),
+      -30px 0 24px -10px rgba(0, 0, 0, 0.2),
+      30px 30px 24px -10px rgba(0, 0, 0, 0.1);
+  }
+  .stick-knob::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 29px;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow:
+      0 1px 2px #000,
+      23px 24px #fff,
+      23px 25px 2px #000,
+      0 48px #fff,
+      0 49px 2px #000,
+      -23px 24px #fff,
+      -23px 25px 2px #000;
+    opacity: 0.15;
   }
 
   .stick-arrow {

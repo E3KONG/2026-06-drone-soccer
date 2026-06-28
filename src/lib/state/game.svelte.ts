@@ -11,6 +11,7 @@ export const game = $state({
   countdown: null as number | null,
   over: false,
   controlGuide: true,
+  showGuide: false,
   resetTick: 0,
 })
 

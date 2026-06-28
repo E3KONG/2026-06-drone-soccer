@@ -16,7 +16,9 @@ export function menuNav(node) {
   let prevSelect = true
 
   const items = () =>
-    [...node.querySelectorAll('.menu-item')].filter((b) => !b.disabled)
+    [...node.querySelectorAll('.menu-item, [data-nav-item]')].filter(
+      (b) => !b.disabled,
+    )
 
   const render = () => {
     const els = items()

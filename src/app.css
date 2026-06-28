@@ -77,6 +77,15 @@ body {
 .menu-item .cursor.right {
   display: none;
 }
+/* Centered menus (pause + control guide) flank the item with both cursors,
+   even on desktop. Hover sizing comes from the shared .cursor rules above. */
+.pause-menu .menu-item .cursor.right,
+.guide-menu .menu-item .cursor.right {
+  display: block;
+  margin-right: 0;
+  margin-left: calc(5 * var(--u));
+  transform: scaleX(-1);
+}
 .menu-item:hover,
 .menu-item:focus-visible,
 .menu-item:active,
@@ -140,6 +149,11 @@ body {
   .menu-item .cursor.right {
     display: block;
     transform: scaleX(-1);
+  }
+  /* portrait spaces cursors via gap, so drop the desktop right-cursor margin */
+  .pause-menu .menu-item .cursor.right,
+  .guide-menu .menu-item .cursor.right {
+    margin-left: 0;
   }
   .menu-item:hover .cursor,
   .menu-item:focus-visible .cursor,

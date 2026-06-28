@@ -21,7 +21,11 @@
   ]
 </script>
 
-<div class="key-controls" class:paused={game.paused} aria-hidden="true">
+<div
+  class="key-controls"
+  class:paused={game.paused || game.showGuide}
+  aria-hidden="true"
+>
   <div class="key-cluster wasd">
     <div class="key-row top">
       <span class="key" class:active={pressedKeys.w}>
