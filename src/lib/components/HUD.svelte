@@ -3,6 +3,7 @@
   import { warning } from '../state/warning.svelte.ts'
   import { game, restartGame } from '../state/game.svelte.ts'
   import { audio } from '../state/audio.svelte.ts'
+  import { toggleFullscreen } from '../fullscreen.js'
   import PauseMenu from './PauseMenu.svelte'
   import EndScreen from './EndScreen.svelte'
   import KeyGuide from './KeyGuide.svelte'
@@ -110,18 +111,6 @@
 
   const syncFullscreenState = () => {
     isFullscreen = Boolean(fullscreenElement())
-  }
-
-  const toggleFullscreen = async () => {
-    const root = document.documentElement
-    if (fullscreenElement()) {
-      if (document.exitFullscreen) await document.exitFullscreen()
-      else if (document.webkitExitFullscreen) document.webkitExitFullscreen()
-      return
-    }
-
-    if (root.requestFullscreen) await root.requestFullscreen()
-    else if (root.webkitRequestFullscreen) root.webkitRequestFullscreen()
   }
 
   const formatTime = (s) =>

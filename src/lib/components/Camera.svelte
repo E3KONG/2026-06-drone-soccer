@@ -12,9 +12,6 @@
   const HEIGHT = 0.5
   const DEFAULT_DISTANCE = Math.hypot(REACH, HEIGHT)
   const DEFAULT_PITCH = Math.atan2(HEIGHT, REACH)
-  const MIN_PITCH = -0.15
-  const MAX_PITCH = 1.2
-  const ROTATE_SENSITIVITY = 0.006
   const ZOOM_SENSITIVITY = 0.0015
 
   // --- FOV punch on score ---
@@ -28,16 +25,12 @@
   const { renderer } = useThrelte()
 
   let camRef = $state()
-  let orbitYawOffset = 0
-  let orbitPitch = DEFAULT_PITCH
   let cameraDistance = DEFAULT_DISTANCE
 
   const targetPos = new Vector3()
   const offset = new Vector3()
 
   const resetCamera = () => {
-    orbitYawOffset = 0
-    orbitPitch = DEFAULT_PITCH
     cameraDistance = DEFAULT_DISTANCE
   }
 
@@ -84,11 +77,11 @@
       camRef.updateProjectionMatrix()
     }
 
-    const orbitYaw = dronePos.yaw + orbitYawOffset
-    const horizontalDistance = Math.cos(orbitPitch) * cameraDistance
+    const orbitYaw = dronePos.yaw
+    const horizontalDistance = Math.cos(DEFAULT_PITCH) * cameraDistance
     offset.set(
       Math.sin(orbitYaw) * horizontalDistance,
-      Math.sin(orbitPitch) * cameraDistance,
+      Math.sin(DEFAULT_PITCH) * cameraDistance,
       Math.cos(orbitYaw) * horizontalDistance,
     )
 
