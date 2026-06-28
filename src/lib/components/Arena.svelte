@@ -27,6 +27,17 @@
             t.needsUpdate = true
           }
         }
+        // desaturate the net (saturation 0): replace its colour with luminance
+        if (m.name === 'Net') {
+          m.onBeforeCompile = (shader) => {
+            shader.fragmentShader = shader.fragmentShader.replace(
+              '#include <map_fragment>',
+              `#include <map_fragment>
+               diffuseColor.rgb = vec3(dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722)));`,
+            )
+          }
+          m.needsUpdate = true
+        }
       }
     })
   })
