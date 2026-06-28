@@ -470,7 +470,7 @@
     pointer-events: none;
     color: var(--color-yellow-400);
     font-family: 'Bitcount Grid Single', system-ui, monospace;
-    font-size: clamp(140px, 90vw, 700px);
+    font-size: var(--fs-xl);
     line-height: 1;
     text-shadow:
       0 0 10px var(--color-gray-500) inset,
@@ -489,7 +489,7 @@
     -webkit-text-stroke-width: 2px;
     -webkit-text-stroke-color: #fff;
     font-family: 'WDXL Lubrifont TC', system-ui, sans-serif;
-    font-size: clamp(160px, 70vw, 520px);
+    font-size: var(--fs-xl);
     line-height: 1;
     text-shadow:
       0 0 30px #fff,
@@ -645,7 +645,7 @@
     background: transparent;
     color: rgba(255, 255, 255, 0.94);
     font-family: 'WDXL Lubrifont TC', system-ui, sans-serif;
-    font-size: clamp(34px, 3.35vw, 64px);
+    font-size: var(--fs-md);
     line-height: 1.05;
     opacity: 0.5;
     pointer-events: auto;
@@ -703,7 +703,7 @@
     white-space: nowrap;
     color: var(--color-red-400);
     font-family: 'WDXL Lubrifont TC', system-ui, sans-serif;
-    font-size: clamp(14px, 1.5vw, 26px);
+    font-size: var(--fs-xs);
     text-shadow: 0 0 10px var(--color-red-400);
   }
   .timer {
@@ -715,7 +715,7 @@
     justify-content: center;
     width: 134px;
     color: rgba(255, 255, 255, 0.96);
-    font-size: clamp(42px, 3.35vw, 64px);
+    font-size: var(--fs-md);
     line-height: 1;
     letter-spacing: 0;
     text-align: center;
@@ -737,7 +737,7 @@
     justify-content: center;
     width: 120px;
     color: rgba(255, 255, 255, 0.7);
-    font-size: clamp(72px, 6.7vw, 150px);
+    font-size: var(--fs-lg);
     line-height: 0.9;
     letter-spacing: 0;
     text-align: center;
@@ -802,11 +802,9 @@
       transform: translate(-50%, -50%) rotate(90deg);
     }
     .timer {
-      font-size: 60px;
       top: 6vh;
     }
     .score-hud {
-      font-size: 20vw;
       bottom: 6.5vh;
     }
     .flash-triangle.top {
@@ -818,7 +816,6 @@
       max-width: 80vw;
       text-align: center;
       line-height: 1.4;
-      font-size: 16px;
     }
   }
   @keyframes flash-fade {

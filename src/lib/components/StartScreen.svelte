@@ -127,7 +127,7 @@
     bottom: calc(365 * var(--u));
     display: flex;
     flex-direction: column;
-    gap: calc(15 * var(--u));
+    gap: calc(30 * var(--u));
     align-items: flex-start;
   }
 
@@ -135,7 +135,7 @@
     position: absolute;
     left: calc(100 * var(--u));
     bottom: calc(190 * var(--u));
-    font-size: calc(48 * var(--u));
+    font-size: var(--fs-sm);
     color: rgba(255, 255, 255, 0.5);
     text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.25);
   }
@@ -165,7 +165,7 @@
     margin: 0;
     font-family: 'Bitcount Grid Single', monospace;
     font-weight: 200;
-    font-size: calc(20 * var(--u));
+    font-size: var(--fs-xs);
     letter-spacing: calc(-0.6 * var(--u));
     color: #fff;
   }
@@ -199,7 +199,6 @@
       top: auto;
       bottom: calc(270 * var(--u));
       transform: translateX(-50%);
-      font-size: calc(64 * var(--u));
       text-align: center;
     }
     .divider {
@@ -228,7 +227,6 @@
       top: auto;
       bottom: calc(98 * var(--u));
       transform: translateX(-50%);
-      font-size: calc(32 * var(--u));
       letter-spacing: calc(-0.96 * var(--u));
     }
   }

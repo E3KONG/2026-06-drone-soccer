@@ -20,6 +20,15 @@
   --color-blue-400: #27b3f5;
   --color-yellow-400: #f8c341;
   --color-red-400: #f76977;
+
+  /* Fluid type scale (vmin-based: scales to the smaller viewport side, so it
+     behaves in both portrait and landscape). Use these everywhere instead of
+     ad-hoc font-size calc()/clamp(). */
+  --fs-xs: clamp(13px, 2.4vmin, 26px); /* captions, key hints */
+  --fs-sm: clamp(20px, 4.1vmin, 44px); /* body copy, small labels */
+  --fs-md: clamp(30px, 6.7vmin, 72px); /* buttons, timer, menu items */
+  --fs-lg: clamp(60px, 14vmin, 150px); /* score */
+  --fs-xl: clamp(130px, 50vmin, 520px); /* full-screen display numbers */
 }
 
 html,
@@ -43,7 +52,7 @@ body {
   background: transparent;
   cursor: pointer;
   font-family: 'WDXL Lubrifont TC', system-ui, sans-serif;
-  font-size: calc(88 * var(--u));
+  font-size: var(--fs-md);
   line-height: 1;
   color: #fff;
   text-shadow: 0 calc(4 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.25);
@@ -86,7 +95,6 @@ body {
   .menu-item {
     gap: calc(20 * var(--u));
     justify-content: center;
-    font-size: calc(128 * var(--u));
   }
   .menu-item .cursor {
     width: calc(52 * var(--u));

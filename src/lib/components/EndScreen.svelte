@@ -44,7 +44,7 @@
   }
   .final-score {
     font-family: 'WDXL Lubrifont TC', system-ui, monospace;
-    font-size: calc(360 * var(--u));
+    font-size: var(--fs-xl);
     line-height: 0.9;
     color: #06f;
     text-shadow: 0 0 30px #0066ff80;
@@ -52,7 +52,7 @@
   .congrats {
     max-width: calc(900 * var(--u));
     margin-top: calc(30 * var(--u));
-    font-size: calc(40 * var(--u));
+    font-size: var(--fs-sm);
     line-height: 1.6;
     letter-spacing: calc(-1.2 * var(--u));
     text-align: center;

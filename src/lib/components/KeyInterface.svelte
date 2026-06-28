@@ -207,7 +207,7 @@
   }
 
   .key-hint {
-    font-size: clamp(15px, 5vw, 30px);
+    font-size: var(--fs-sm);
     color: rgba(255, 255, 255, 0.95);
     text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     pointer-events: none;
@@ -222,24 +222,26 @@
     transition: opacity 0.15s ease-in-out;
   }
   .key-row.top > .key > span.key-hint {
-    bottom: calc(100% + 6px);
+    bottom: calc(100% + 12px);
   }
   .key-row:not(.top) > .key > span.key-hint {
-    top: calc(100% + 6px);
+    top: calc(100% + 12px);
   }
 
   .key-cap {
     display: inline-block;
     min-width: 2.2em;
     padding: 0.1em 0.5em 0.18em;
-    border: 3px solid rgba(255, 255, 255, 1);
+    border-style: solid;
+    border-width: 0.1em;
+    border-color: #fff;
     color: #fff;
     text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
     border-radius: 0.2em;
     font-family: inherit;
     text-align: center;
-    font-size: clamp(15px, 5vw, 30px);
+    font-size: var(--fs-sm);
   }
 
   /* Paused: lift and enlarge the cluster, reveal hints, drop the reset keys. */
@@ -300,7 +302,7 @@
   .key-legend {
     position: fixed;
     left: 50%;
-    bottom: 8vh;
+    bottom: 10vh;
     transform: translateX(-50%);
     z-index: 45;
     display: flex;
