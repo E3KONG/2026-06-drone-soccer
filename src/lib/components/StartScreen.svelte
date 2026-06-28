@@ -52,6 +52,8 @@
   <div class="menu" use:menuNav>
     <MenuItem onclick={() => start('practice')}>練習場</MenuItem>
     <MenuItem onclick={() => start('match')}>3分鐘挑戰</MenuItem>
+    <!-- ponytail: dev-only shortcut to preview the end screen; delete before ship. -->
+    <MenuItem onclick={() => { score.value = 12; game.started = true; game.over = true }}>結算畫面 (DEV)</MenuItem>
   </div>
 
   <!-- ponytail: 設定 is visual-only; no settings system exists yet. Wire up when one does. -->
