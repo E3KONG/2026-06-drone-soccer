@@ -7,10 +7,56 @@
   import logoUrl from '../../assets/hud/kids-reporter-logo.svg?url'
   import { toPng } from 'html-to-image'
   import { tick } from 'svelte'
+  import { goalShots } from '../state/goalShots.svelte.ts'
 
   let endEl
   let bgEl
   let capturing = $state(false)
+
+  // pick a goal moment as the background; default to the latest goal, fall back
+  // to the static image when no goals were captured.
+  let selectedUrl = $state(null)
+  const bgSrc = $derived(selectedUrl ?? goalShots.items.at(-1)?.url ?? bgUrl)
+
+  // scrollable thumbnail strip: up to 5 visible on desktop (row), 10 on mobile
+  // (column). Arrows scroll by one viewport; native scroll/touch also works.
+  let portrait = $state(false)
+  $effect(() => {
+    const mq = matchMedia('(orientation: portrait)')
+    const sync = () => (portrait = mq.matches)
+    sync()
+    mq.addEventListener('change', sync)
+    return () => mq.removeEventListener('change', sync)
+  })
+  const pageSize = $derived(portrait ? 10 : 5)
+  const overflowing = $derived(goalShots.items.length > pageSize)
+
+  let listEl
+  const scrollList = (dir) => {
+    if (!listEl) return
+    listEl.scrollBy({
+      left: portrait ? 0 : dir * listEl.clientWidth,
+      top: portrait ? dir * listEl.clientHeight : 0,
+      behavior: 'smooth',
+    })
+  }
+
+  // dim the prev/next arrow once the strip is scrolled to that edge.
+  let atStart = $state(true)
+  let atEnd = $state(false)
+  const updateEdges = () => {
+    if (!listEl) return
+    const pos = portrait ? listEl.scrollTop : listEl.scrollLeft
+    const view = portrait ? listEl.clientHeight : listEl.clientWidth
+    const full = portrait ? listEl.scrollHeight : listEl.scrollWidth
+    atStart = pos <= 1
+    atEnd = pos + view >= full - 1
+  }
+  $effect(() => {
+    goalShots.items.length // re-check when shots or orientation change
+    portrait
+    updateEdges()
+  })
 
   const shareScreenshot = async () => {
     capturing = true
@@ -39,7 +85,7 @@
         (w - iw * s) * posX,
         (h - ih * s) * 0.5,
         iw * s,
-        ih * s
+        ih * s,
       )
       // brightness(0.5) on portrait == 50% black overlay over an opaque image
       if (portrait) {
@@ -79,7 +125,50 @@
 </script>
 
 <div class="end" class:capturing bind:this={endEl}>
-  <img class="bg" src={bgUrl} alt="" bind:this={bgEl} />
+  <img class="bg" src={bgSrc} alt="" bind:this={bgEl} />
+
+  {#if goalShots.items.length > 0}
+    <div class="shot-picker">
+      {#if overflowing}
+        <button
+          class="page-arrow prev"
+          class:dim={atStart}
+          type="button"
+          aria-label="Previous"
+          onclick={() => scrollList(-1)}
+        >
+          <svg viewBox="0 0 23 12"
+            ><path d="M11.2324 0L0 11.2269H22.5246L11.2324 0Z" /></svg
+          >
+        </button>
+      {/if}
+      <div class="shot-list" bind:this={listEl} onscroll={updateEdges}>
+        {#each goalShots.items as shot (shot.id)}
+          <button
+            class="shot"
+            class:active={bgSrc === shot.url}
+            type="button"
+            onclick={() => (selectedUrl = shot.url)}
+          >
+            <img src={shot.url} alt="" />
+          </button>
+        {/each}
+      </div>
+      {#if overflowing}
+        <button
+          class="page-arrow next"
+          class:dim={atEnd}
+          type="button"
+          aria-label="Next"
+          onclick={() => scrollList(1)}
+        >
+          <svg viewBox="0 0 23 12"
+            ><path d="M11.2324 0L0 11.2269H22.5246L11.2324 0Z" /></svg
+          >
+        </button>
+      {/if}
+    </div>
+  {/if}
 
   <img class="logo" src={logoUrl} alt="少年報導者 THE REPORTER FOR KIDS" />
 
@@ -163,8 +252,81 @@
       rgba(255, 255, 255, 0.5);
   }
   .capturing .congrats,
-  .capturing .actions {
+  .capturing .actions,
+  .capturing .shot-picker {
     display: none;
+  }
+  .shot-picker {
+    position: absolute;
+    top: calc(75 * var(--u));
+    right: 50%;
+    transform: translateX(50%);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: calc(0 * var(--u));
+    padding: calc(8 * var(--u));
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: calc(8 * var(--u));
+  }
+  .shot-list {
+    display: flex;
+    gap: calc(6 * var(--u));
+    max-width: min(calc(724 * var(--u)), 76vw);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .shot-list::-webkit-scrollbar {
+    display: none;
+  }
+  .page-arrow {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(30 * var(--u));
+    height: calc(30 * var(--u));
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    color: #808080;
+  }
+  .page-arrow svg {
+    display: block;
+    width: calc(22 * var(--u));
+    height: auto;
+    fill: currentColor;
+  }
+  .page-arrow.dim {
+    opacity: 0.3;
+  }
+  .page-arrow.prev {
+    transform: rotate(-90deg);
+  }
+  .page-arrow.next {
+    transform: rotate(90deg);
+  }
+  .shot {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: calc(5 * var(--u));
+    background: none;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .shot.active {
+    border-color: var(--color-gray-300);
+  }
+  .shot img {
+    display: block;
+    width: calc(140 * var(--u));
+    height: calc(79 * var(--u));
+    object-fit: cover;
   }
   .capturing .goals {
     display: block;
@@ -226,6 +388,23 @@
       filter: brightness(0.5);
       object-position: 33% center;
     }
+    .shot-picker {
+      flex-direction: column;
+    }
+    .shot-list {
+      flex-direction: column;
+      max-width: none;
+      max-height: min(calc(844 * var(--u)), 55vh);
+      overflow-x: hidden;
+      overflow-y: auto;
+      scroll-snap-type: y proximity;
+    }
+    .page-arrow.prev {
+      transform: rotate(0deg);
+    }
+    .page-arrow.next {
+      transform: rotate(180deg);
+    }
     .logo {
       left: 50%;
       transform: translateX(-50%);
@@ -251,6 +430,15 @@
     .congrats {
       text-align: center;
       font-size: calc(var(--fs-sm) * 0.9);
+    }
+    .shot-picker {
+      top: 50%;
+      right: calc(30 * var(--u));
+      transform: translateY(-50%);
+      flex-direction: column;
+    }
+    .shot.active {
+      border-color: var(--color-gray-600);
     }
     .divider {
       left: 50%;

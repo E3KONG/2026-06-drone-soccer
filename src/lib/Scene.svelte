@@ -8,6 +8,7 @@
   import Camera from './components/Camera.svelte'
   import Goal from './components/Goal.svelte'
   import Effects from './components/Effects.svelte'
+  import GoalRecorder from './components/GoalRecorder.svelte'
   import hdriFullUrl from '../assets/hdri-full.exr?url'
   import hdriCompressUrl from '../assets/hdri-compress_1K.jpg?url'
 
@@ -62,6 +63,7 @@
   <Goal />
   <Camera />
   <Effects />
+  <GoalRecorder />
 </Canvas>
 
 <style>
