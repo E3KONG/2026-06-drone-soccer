@@ -47,6 +47,9 @@
   let showWarning = $state(false)
   let previousWarn = warning.count
   let warningTimer
+  let showReturnWarning = $state(false)
+  let previousReturn = warning.returnCount
+  let returnWarningTimer
   let dimmed = $state(false)
   let pressedKeys = $state({
     w: false,
@@ -191,6 +194,20 @@
 
     return () => clearTimeout(warningTimer)
   })
+
+  $effect(() => {
+    if (warning.returnCount === previousReturn) return
+
+    previousReturn = warning.returnCount
+    showReturnWarning = true
+    dimmed = true
+    clearTimeout(returnWarningTimer)
+    returnWarningTimer = setTimeout(() => {
+      showReturnWarning = false
+    }, 1000)
+
+    return () => clearTimeout(returnWarningTimer)
+  })
 </script>
 
 <svelte:window
@@ -204,6 +221,7 @@
 <div
   class="static-ui"
   class:warn={showWarning}
+  class:return-warn={showReturnWarning}
   class:scored={showGoalFlash}
   class:dimmed
   class:paused={game.paused}
@@ -273,6 +291,7 @@
   class="flash-idle"
   class:scored={showGoalFlash}
   class:warn={showWarning}
+  class:return-warn={showReturnWarning}
   aria-hidden="true"
 >
   <div class="flash-corner top left">{@html flashSvg}</div>
@@ -331,6 +350,12 @@
 {#if showWarning}
   <div class="warning-text" role="alert">
     無人機足機比賽中禁止從球門背後穿越及穿越自方破門
+  </div>
+{/if}
+
+{#if showReturnWarning}
+  <div class="warning-text return" role="alert">
+    得分後須先飛返己方半場才能再次破門
   </div>
 {/if}
 
@@ -394,6 +419,11 @@
   .static-ui.warn {
     color: var(--color-red-400);
     filter: drop-shadow(0 0 8px var(--color-red-400));
+    animation: static-warn-tint 1s ease-out forwards;
+  }
+  .static-ui.return-warn {
+    color: var(--color-violet-400);
+    filter: drop-shadow(0 0 8px var(--color-violet-400));
     animation: static-warn-tint 1s ease-out forwards;
   }
   .static-ui.scored {
@@ -541,6 +571,10 @@
   }
   .flash-idle.warn :global(path) {
     fill: var(--color-red-400);
+    transition: fill 0s;
+  }
+  .flash-idle.return-warn :global(path) {
+    fill: var(--color-violet-400);
     transition: fill 0s;
   }
   .flash-idle :global([id^='Flash-line'] path),
@@ -711,6 +745,10 @@
     font-family: 'WDXL Lubrifont TC', system-ui, sans-serif;
     font-size: var(--fs-xs);
     text-shadow: 0 0 10px var(--color-red-400);
+  }
+  .warning-text.return {
+    color: var(--color-violet-400);
+    text-shadow: 0 0 10px var(--color-violet-400);
   }
   .timer {
     top: calc(30 * var(--hud-u) + var(--label-gap));

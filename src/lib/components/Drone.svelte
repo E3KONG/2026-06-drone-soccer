@@ -8,6 +8,7 @@
   import { audio } from '../state/audio.svelte.ts'
   import { dronePos } from '../state/droneState.svelte.ts'
   import { warning } from '../state/warning.svelte.ts'
+  import { score } from '../state/score.svelte.ts'
   import { game } from '../state/game.svelte.ts'
   import { GOALS, GOAL_RING_R, GOAL_TUBE_R } from './Goal.svelte'
   import {
@@ -259,6 +260,17 @@
           droneRef.position.z = G.z + dirBack * DRONE_RADIUS
           vel.z = -vel.z * RESTITUTION
           warning.count++
+        } else if (
+          // 未回防(尚未飛回己方半場)前，正面穿門被擋下，不得進球
+          !score.armed &&
+          inOpening &&
+          (startZ - G.z) * dirBack < 0 &&
+          vel.z * dirBack > 0 &&
+          (droneRef.position.z - G.z) * dirBack > -DRONE_RADIUS
+        ) {
+          droneRef.position.z = G.z - dirBack * DRONE_RADIUS
+          vel.z = -vel.z * RESTITUTION
+          warning.returnCount++
         }
       } else {
         const side = Math.sign(startZ - G.z) || 1

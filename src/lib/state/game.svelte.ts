@@ -18,6 +18,7 @@ export const game = $state({
 export function restartGame() {
   resetInput()
   score.value = 0
+  score.armed = true
   if (game.mode === 'match') {
     game.timeLeft = 180
     game.countdown = 3

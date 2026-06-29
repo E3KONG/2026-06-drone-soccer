@@ -7,6 +7,7 @@
   import Enemies from './components/Enemies.svelte'
   import Camera from './components/Camera.svelte'
   import Goal from './components/Goal.svelte'
+  import HalfLine from './components/HalfLine.svelte'
   import Effects from './components/Effects.svelte'
   import GoalRecorder from './components/GoalRecorder.svelte'
   import hdriFullUrl from '../assets/hdri-full.exr?url'
@@ -61,6 +62,7 @@
   <Drone />
   <Enemies />
   <Goal />
+  <HalfLine />
   <Camera />
   <Effects />
   <GoalRecorder />
