@@ -329,7 +329,7 @@
           ud.spinDir * input.yaw * MIX_YAW,
       )
       ud.curSpeed += (target - ud.curSpeed) * FIN_SPEED_SMOOTH
-      f.rotateY(ud.curSpeed * ud.spinDir)
+      f.rotateY(-ud.curSpeed * ud.spinDir)
       if (ud.finMat) {
         const k = MathUtils.clamp(
           (ud.curSpeed - FIN_SPEED_RED) / (FIN_SPEED_BLUE - FIN_SPEED_RED),
